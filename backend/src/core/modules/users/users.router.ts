@@ -3,7 +3,7 @@ import { validator } from '../../validator';
 import { authMiddleware } from '../auth';
 import { createUserValidationSchema, updateUserValidationSchema } from './users.validation-schema';
 import { UserService } from './users.service';
-import { User } from './users.interface';
+import { UserAttributes } from '../../../models/User';
 
 export const userRouter = new Router({
     prefix: '/users'
@@ -26,7 +26,7 @@ userRouter.get('/', async ctx => {
 userRouter.get('/:id', async ctx => {
     const { id } = ctx.params;
 
-    if (ctx.state.user.role !== 'admin' && ctx.state.user._id !== id) {
+    if (ctx.state.user.role !== 'admin' && ctx.state.user.id !== id) {
         ctx.status = 403;
         ctx.body = { error: { message: 'Access denied' } };
         return;
@@ -54,7 +54,8 @@ userRouter.post(
         }
 
         try {
-            const userData = ctx.request.body as Omit<User, "_id" | "createdAt">;
+            // Omit id, createdAt and updatedAt as these will be handled by Sequelize
+            const userData = ctx.request.body as Omit<UserAttributes, 'id' | 'createdAt' >;
             const user = await UserService.create(userData);
 
             ctx.status = 201;
@@ -73,13 +74,14 @@ userRouter.put(
     async ctx => {
         const { id } = ctx.params;
 
-        if (ctx.state.user.role !== 'admin' && ctx.state.user._id !== id) {
+        // Update to use id instead of _id
+        if (ctx.state.user.role !== 'admin' && ctx.state.user.id !== id) {
             ctx.status = 403;
             ctx.body = { error: { message: 'Access denied' } };
             return;
         }
 
-        const userData = ctx.request.body as Partial<User>;
+        const userData = ctx.request.body as Partial<UserAttributes>;
 
         if (ctx.state.user.role !== 'admin' && userData.role) {
             delete userData.role;
@@ -94,13 +96,12 @@ userRouter.put(
 
         ctx.body = updatedUser;
     }
-
 );
 
 userRouter.delete('/:id', async ctx => {
     const { id } = ctx.params;
 
-    const loggedInUserId = ctx.state.user._id;
+    const loggedInUserId = ctx.state.user.id;
 
     if (id !== loggedInUserId && ctx.state.user.role !== 'admin') {
         ctx.status = 403;

@@ -15,7 +15,6 @@
   "dependencies": {
     "@koa/cors": "^5.0.0",
     "amqplib": "^0.10.5",
-    "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",

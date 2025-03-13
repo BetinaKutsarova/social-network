@@ -1,7 +1,8 @@
 import { Context, Next } from 'koa';
 import jwt from 'jsonwebtoken';
 import { config } from '../../../config';
-import { db } from '../../../core/db';
+// import { db } from '../../../core/db';
+import { User } from '../../../models';
 
 interface JwtPayload {
   userId: string;
@@ -18,40 +19,28 @@ export const authMiddleware = async (ctx: Context, next: Next) => {
     }
     
     const token = authHeader.substring(7); // Remove 'Bearer ' from the header
+    console.log('Token extracted:', token.substring(0, 15) + '...');
+    
     
     // Verify the token
     const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
+    console.log('Token verified, userId:', decoded.userId);
     
-    // Check if the user exists
-    const result = await db.query(
-      'SELECT id, name, email, role FROM users WHERE id = $1',
-      [decoded.userId]
-    );
+   // Get the user from the database
+   const user = await User.findByPk(decoded.userId);
     
-    const user = result.rows[0];
-    
-    if (!user) {
-      ctx.status = 401;
-      ctx.body = { error: 'User not found' };
-      return;
-    }
-    
-    // Attach the user to the context for use in routes
-    ctx.state.user = user;
-    
-    await next();
-  } catch (error) {
-    ctx.status = 401;
-    ctx.body = { error: 'Invalid token' };
-  }
-};
+   if (!user) {
+     ctx.status = 401;
+     ctx.body = { error: { message: 'Invalid token' } };
+     return;
+   }
 
-export const adminMiddleware = async (ctx: Context, next: Next) => {
-  if (!ctx.state.user || ctx.state.user.role !== 'admin') {
-    ctx.status = 403;
-    ctx.body = { error: 'Access denied. Admin role required.' };
-    return;
-  }
-  
-  await next();
-};
+   // Add the user to the context state
+   ctx.state.user = user;
+   
+   await next();
+ } catch (error) {
+   ctx.status = 401;
+   ctx.body = { error: { message: 'Invalid token' } };
+ }
+}

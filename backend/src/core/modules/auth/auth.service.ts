@@ -1,54 +1,43 @@
-import * as crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { db } from '../../../core/db';
+import { User } from '../../../models';
+import { UserAttributes, UserWithoutPassword } from '../../../models/User';
 import { config } from '../../../config';
-import { User, UserWithoutPassword } from '../users/users.interface';
 
 export class AuthService {
-  static async register(userData: Omit<User, 'id' | 'created_at'>): Promise<UserWithoutPassword> {
+  static async register(userData: Omit<UserAttributes, 'id'>): Promise<UserWithoutPassword> {
     // Check if user already exists
-    const existingUser = await db.query(
-      'SELECT * FROM users WHERE email = $1',
-      [userData.email]
-    );
+    const existingUser = await User.findOne({ where: { email: userData.email } });
     
-    if (existingUser.rows.length > 0) {
+    if (existingUser) {
       throw new Error('User with this email already exists');
     }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     
-    // Generate a UUID
-    const userId = crypto.randomUUID();
+    // Create the user (Sequelize will handle UUID generation)
+    const user = await User.create({
+      ...userData,
+      password: hashedPassword,
+      role: userData.role || 'user'
+    });
     
-    // Insert the new user
-    const result = await db.query(
-      `INSERT INTO users (id, name, email, password, role) 
-       VALUES ($1, $2, $3, $4, $5) 
-       RETURNING id, name, email, role, created_at`,
-      [userId, userData.name, userData.email, hashedPassword, userData.role || 'user']
-    );
-    
-    return result.rows[0];
+    return user.toJSON(); // Returns user without password thanks to toJSON method
   }
 
   static async login(email: string, password: string) {
     // Find user by email
-    const result = await db.query(
-      'SELECT * FROM users WHERE email = $1',
-      [email]
-    );
-    
-    const user = result.rows[0];
+    const user = await User.findOne({ where: { email } });
     
     if (!user) {
       throw new Error('Invalid email or password');
     }
 
+    const userData = user.get({ plain: true });
+
     // Check password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, userData.password); // cause user.password is undefined due to user.toJSON()
     if (!isPasswordValid) {
       throw new Error('Invalid email or password');
     }
@@ -60,11 +49,10 @@ export class AuthService {
       { expiresIn: config.jwt.expiresIn }
     );
 
-    // Remove password from user object
-    const { password: _, ...userWithoutPassword } = user;
-    
+    console.log('USEEEEER', user);
+
     return {
-      user: userWithoutPassword,
+      user: user.toJSON(), // Returns user without password
       token
     };
   }

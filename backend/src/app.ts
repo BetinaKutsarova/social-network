@@ -2,6 +2,8 @@ import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
 import Router from 'koa-router';
+import { initDatabase } from './core/db';
+import { runSeeder } from './seed';
 
 import { authRouter } from './core/modules/auth';
 import { userRouter } from './core/modules/users';
@@ -51,11 +53,23 @@ rootRouter.stack.forEach(item => {
   }
 });
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await initDatabase();
+    await runSeeder();
+
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
 
 app.on('error', (err) => {
   console.error('Error:', err);
 });
+
+startServer();

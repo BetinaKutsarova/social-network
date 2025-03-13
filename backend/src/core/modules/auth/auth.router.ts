@@ -2,7 +2,7 @@ import Router from 'koa-router';
 import { validator } from '../../validator';
 import { loginValidationSchema, registerValidationSchema } from './auth.validation-schema';
 import { AuthService } from './auth.service';
-import { User } from '../../modules/users';
+import { UserAttributes } from '../../../models/User';
 
 export const authRouter = new Router({
   prefix: '/auth'
@@ -13,7 +13,7 @@ authRouter.post(
   validator(registerValidationSchema),
   async (ctx) => {
     try {
-      const userData = ctx.request.body as Omit<User, "_id" | "createdAt">;
+      const userData = ctx.request.body as Omit<UserAttributes, "id" | "createdAt" >;
       const user = await AuthService.register(userData);
 
       ctx.status = 201;

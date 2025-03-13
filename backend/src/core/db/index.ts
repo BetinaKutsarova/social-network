@@ -1,36 +1,38 @@
-import { Pool } from 'pg';
+import { Sequelize } from 'sequelize';
 import { config } from '../../config';
 
-// Create a connection pool
-const pool = new Pool({
+// Create and export Sequelize instance
+const sequelize = new Sequelize({
   host: config.database.host,
   port: config.database.port,
-  user: config.database.user,
+  username: config.database.user,
   password: config.database.password,
   database: config.database.name,
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000
+  dialect: 'postgres',
+  pool: {
+    max: 20,
+    idle: 30000
+  },
+  logging: process.env.NODE_ENV === 'development' ? console.log : false
 });
 
-// Export the query function
-export const db = {
-  query: (text: string, params?: any[]) => pool.query(text, params),
-  getClient: () => pool.connect(),
+// Initialize database
+export const initDatabase = async () => {
+  try {
+    // Test connection
+    await sequelize.authenticate();
+    console.log('Database connection established successfully');
+    
+    // Import model associations
+    // await require('./associations').default();
+    
+    // Sync models with database
+    await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
+    console.log('Database models synchronized successfully');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+    throw error;
+  }
 };
 
-// Initialize database tables if they don't exist
-export const initDatabase = async () => {
-  // Users table
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS users (
-      id UUID PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) UNIQUE NOT NULL,
-      password VARCHAR(255) NOT NULL,
-      role VARCHAR(50) NOT NULL,
-      created_at TIMESTAMP NOT NULL DEFAULT NOW()
-    )
-  `);
-  
-  console.log('Database initialized successfully');
-};
+export default sequelize;
