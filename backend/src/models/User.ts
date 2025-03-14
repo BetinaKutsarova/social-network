@@ -7,7 +7,7 @@ export interface UserAttributes {
   name: string;
   email: string;
   password: string;
-  role: 'user' | 'admin' | 'moderator';
+  role: 'user' | 'admin' | 'mentor';
 }
 
 export type UserWithoutPassword = Omit<UserAttributes, 'password'>;
@@ -17,11 +17,6 @@ interface UserCreationAttributes extends Optional<UserAttributes, 'id' > {}
 
 // User model class definition
 class User extends Model<UserAttributes, UserCreationAttributes> {
-    // public id!: string;
-    // public name!: string;
-    // public email!: string;
-    // public password!: string;
-    // public role!: 'user' | 'admin' | 'moderator';
     get id(): string {
       return this.getDataValue('id');
     }
@@ -71,7 +66,7 @@ User.init(
       allowNull: false
     },
     role: {
-      type: DataTypes.ENUM('user', 'admin', 'moderator'),
+      type: DataTypes.ENUM('user', 'admin', 'mentor'),
       allowNull: false,
       defaultValue: 'user'
     },
