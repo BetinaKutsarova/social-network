@@ -1,11 +1,12 @@
 import React from 'react';
 import { useState, ChangeEvent, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Message } from '../../components/ui/message';
 import { Input } from '../../components/ui/input';
 import { loginValidator } from '../../utils/loginValidator';
+import { loginUser } from '../../services/loginUser';
 
-interface FormDataType {
+interface FormData {
     email: string;
     password: string;
 }
@@ -18,9 +19,9 @@ interface ErrorsType {
 export const Login: React.FC = () => {
     const [submitMessage, setSubmitMessage] = useState<string>("");
     const [messageType, setMessageType] = useState<string>("");
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
-    const [formData, setFormData] = useState<FormDataType>({
+    const [formData, setFormData] = useState<FormData>({
         email: "",
         password: ""
     });
@@ -31,41 +32,57 @@ export const Login: React.FC = () => {
     });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
-        const error = loginValidator(name, value)
+        const error = loginValidator(name as "email" | "password", value);
         setErrors(prev => ({
             ...prev,
             [name]: error
-        }))
+        }));
     }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+        e.preventDefault();
         const newErrors = {
             email: loginValidator("email", formData.email),
             password: loginValidator("password", formData.password),
-        }
+        };
+
         setErrors(newErrors);
         const newErrorValues = Object.values(newErrors);
         if (newErrorValues.every(error => error === "")) {
-            console.log("Form is valid and submitted", formData)
-            setMessageType("success");
-            setSubmitMessage("Yay! Successfully logged in!");
+            const userData: FormData = {
+                email: formData.email,
+                password: formData.password,
+            };
 
-            setTimeout(() => {
-                // navigate('/home');
-            }, 1500);
-            setFormData({
-                email: "",
-                password: ""
-            });
-        } else {
-            setMessageType("error");
-            setSubmitMessage("Oh no! You have a boo boo:(");
+            loginUser(userData)
+                .then((response) => {
+                    console.log('Login successful:', response);
+                    setMessageType("success");
+                    setSubmitMessage("Successfully logged in!");
+
+                    setTimeout(() => {
+                        navigate('/dashboard');
+                    }, 1500);
+
+                    setFormData({
+                        email: "",
+                        password: "",
+                    });
+                })
+                .catch(error => {
+                    console.error('Login error:', error);
+                    setMessageType("error");
+                    if (error.response && error.response.data && error.response.data.message) {
+                        setSubmitMessage(error.response.data.message);
+                    } else {
+                        setSubmitMessage("Login failed. Please try again.");
+                    }
+                });
         }
     }
 
