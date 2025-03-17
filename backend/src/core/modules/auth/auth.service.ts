@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { User } from '../../../models';
 import { UserAttributes, UserWithoutPassword } from '../../../models/User';
 import { config } from '../../../config';
+import { redisClient } from '../redis/redis.service';
 
 export class AuthService {
   static async register(userData: Omit<UserAttributes, 'id'>): Promise<UserWithoutPassword> {
@@ -48,5 +49,33 @@ export class AuthService {
       user: user.toJSON(), // Returns user without password
       token
     };
+  }
+
+  static async logout(token: string): Promise<void> {
+    try {
+      const decoded = jwt.decode(token) as { exp: number };
+      
+      const now = Math.floor(Date.now() / 1000);
+      const expiresIn = decoded.exp - now;
+      
+      if (expiresIn > 0) {
+        await redisClient.set(`blacklist:${token}`, '1', {
+          EX: expiresIn
+        });
+      }
+    } catch (error) {
+      console.error('Error invalidating token:', error);
+      throw error;
+    }
+  }
+
+  static async isTokenBlacklisted(token: string): Promise<boolean> {
+    try {
+      const isBlacklisted = await redisClient.get(`blacklist:${token}`);
+      return !!isBlacklisted;
+    } catch (error) {
+      console.error('Error checking token blacklist:', error);
+      throw error;
+    }
   }
 }

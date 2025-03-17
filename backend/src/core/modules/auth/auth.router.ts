@@ -13,7 +13,7 @@ authRouter.post(
   validator(registerValidationSchema),
   async (ctx) => {
     try {
-      const userData = ctx.request.body as Omit<UserAttributes, "id" | "createdAt" >;
+      const userData = ctx.request.body as Omit<UserAttributes, "id" | "createdAt">;
       const user = await AuthService.register(userData);
 
       ctx.status = 201;
@@ -54,3 +54,26 @@ authRouter.post(
     }
   }
 );
+
+authRouter.post(
+  '/logout',
+  async (ctx) => {
+    try {
+      const authHeader = ctx.headers.authorization;
+
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        ctx.status = 400;
+        ctx.body = { success: false, message: 'No authentication token provided' };
+        return;
+      }
+
+      const token = authHeader.substring(7);
+      await AuthService.logout(token);
+
+      ctx.status = 200;
+      ctx.body = { success: true, message: 'Logged out successfully' };
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = { success: false, message: 'Failed to process logout' };
+    }
+  });
