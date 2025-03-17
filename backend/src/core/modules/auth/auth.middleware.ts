@@ -1,7 +1,6 @@
 import { Context, Next } from 'koa';
 import jwt from 'jsonwebtoken';
 import { config } from '../../../config';
-// import { db } from '../../../core/db';
 import { User } from '../../../models';
 
 interface JwtPayload {

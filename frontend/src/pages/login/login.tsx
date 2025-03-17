@@ -5,6 +5,7 @@ import { Message } from '../../components/ui/message';
 import { Input } from '../../components/ui/input';
 import { loginValidator } from '../../utils/loginValidator';
 import { loginUser } from '../../services/loginUser';
+import Cookies from 'js-cookie';
 
 interface FormData {
     email: string;
@@ -64,6 +65,12 @@ export const Login: React.FC = () => {
                     console.log('Login successful:', response);
                     setMessageType("success");
                     setSubmitMessage("Successfully logged in!");
+
+                    Cookies.set('auth_token', response.token, { 
+                        expires: 1,
+                        secure: import.meta.env.PROD,
+                        sameSite: 'strict'
+                    });
 
                     setTimeout(() => {
                         navigate('/dashboard');

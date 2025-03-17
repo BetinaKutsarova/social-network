@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '../../components/ui/input';
 import { Message } from '../../components/ui/message';
 import { registerValidator } from '../../utils/registerValidator';
-import { PasswordStrengthIndicator } from '../../components/ui/passwordStrengthIndicator/passwordStrengthIndicator';
+import { PasswordStrengthIndicator } from '../../components/ui/passwordStrengthIndicator';
 import { registerUser } from '../../services/registerUser';
 
 interface FormData {
