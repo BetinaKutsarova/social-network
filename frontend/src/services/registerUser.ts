@@ -4,6 +4,7 @@ interface UserData {
     username: string;
     email: string;
     password: string;
+    role: 'user' | 'mentor' | 'admin'
 }
 
 /**
@@ -18,8 +19,10 @@ export const registerUser = async (userData: UserData) => {
             name: userData.username,
             email: userData.email,
             password: userData.password,
-            role: 'user'
+            role: userData.role
         };
+
+        console.log(userData.role)
 
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, apiData, {
             headers: {

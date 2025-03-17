@@ -7,9 +7,17 @@ import { PasswordStrengthIndicator } from '../../components/ui/passwordStrengthI
 import { registerUser } from '../../services/registerUser';
 
 interface FormData {
-  username: string;
-  email: string;
-  password: string;
+    username: string;
+    email: string;
+    password: string;
+    role: 'user' | 'mentor' | 'admin'
+}
+
+interface FormErrors {
+    username: string;
+    email: string;
+    password: string;
+    role?: string;
 }
 
 export const Register: React.FC = () => {
@@ -21,32 +29,35 @@ export const Register: React.FC = () => {
         username: "",
         email: "",
         password: "",
+        role: "user"
     });
 
-    const [errors, setErrors] = useState<FormData>({
+    const [errors, setErrors] = useState<FormErrors>({
         username: "",
         email: "",
         password: "",
     });
 
-    function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
 
-        const error = registerValidator(name as keyof FormData, value);
-        setErrors(prev => ({
-            ...prev,
-            [name]: error
-        }));
+        if (name === 'username' || name === 'email' || name === 'password') {
+            const error = registerValidator(name as 'username' | 'email' | 'password', value);
+            setErrors(prev => ({
+                ...prev,
+                [name]: error
+            }));
+        }
     }
 
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        const newErrors: FormData = {
+        const newErrors: FormErrors = {
             username: registerValidator("username", formData.username),
             email: registerValidator("email", formData.email),
             password: registerValidator("password", formData.password),
@@ -60,33 +71,35 @@ export const Register: React.FC = () => {
                 username: formData.username,
                 email: formData.email,
                 password: formData.password,
+                role: formData.role
             };
 
             registerUser(userData)
-            .then((response) => {
-                console.log('Registration successful:', response);
-                setMessageType("success");
-                setSubmitMessage("Yay! Successfully registered!");
+                .then((response) => {
+                    console.log('Registration successful:', response);
+                    setMessageType("success");
+                    setSubmitMessage("Yay! Successfully registered!");
 
-                setTimeout(() => {
-                    navigate('/home');
-                }, 1500);
+                    setTimeout(() => {
+                        navigate('/login');
+                    }, 1500);
 
-                setFormData({
-                    username: "",
-                    email: "",
-                    password: "",
+                    setFormData({
+                        username: "",
+                        email: "",
+                        password: "",
+                        role: "user"
+                    });
+                })
+                .catch(error => {
+                    console.error('Registration error:', error);
+                    setMessageType("error");
+                    if (error.response && error.response.data && error.response.data.message) {
+                        setSubmitMessage(error.response.data.message);
+                    } else {
+                        setSubmitMessage("Registration failed. Please try again.");
+                    }
                 });
-            })
-            .catch(error => {
-                console.error('Registration error:', error);
-                setMessageType("error");
-                if (error.response && error.response.data && error.response.data.message) {
-                    setSubmitMessage(error.response.data.message);
-                } else {
-                    setSubmitMessage("Registration failed. Please try again.");
-                }
-            });
         } else {
             setMessageType("error");
             setSubmitMessage("Oh no! You have a boo boo:(");
@@ -131,6 +144,22 @@ export const Register: React.FC = () => {
                 >
                     <PasswordStrengthIndicator password={formData.password} />
                 </Input>
+
+                <div className="form-group">
+                    <label htmlFor="roleid">Role</label>
+                    <select
+                        name="role"
+                        id="roleid"
+                        value={formData.role}
+                        onChange={handleChange}
+                        className="form-select"
+                        required
+                    >
+                        <option value="user">User</option>
+                        <option value="mentor">Mentor</option>
+                    </select>
+                </div>
+
                 <button type="submit">Register</button>
                 {submitMessage && <Message type={messageType}>{submitMessage}</Message>}
                 <p>Already have an account? <Link to="/login">Login here</Link></p>
