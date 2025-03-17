@@ -1,23 +1,13 @@
 import { useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-
-interface PasswordStrengthIndicatorProps {
-  password: string;
-}
-
-interface StrengthResult {
-  score: number;
-  label: string;
-  color?: string;
-  percent?: number;
-}
+import { PasswordStrengthIndicatorProps, StrengthResult } from '../../types/passwordIndicator.types';
 
 export const PasswordStrengthIndicator = ({ password }: PasswordStrengthIndicatorProps) => {
   const [showTip, setShowTip] = useState<boolean>(false);
 
   const getStrength = (password: string): StrengthResult => {
     if (!password) return { score: 0, label: 'None' };
-    
+
     let score = 0;
     if (password.length >= 5) score += 1;
     if (password.length >= 12) score += 1;
@@ -25,10 +15,10 @@ export const PasswordStrengthIndicator = ({ password }: PasswordStrengthIndicato
     if (/[a-z]/.test(password)) score += 1;
     if (/[0-9]/.test(password)) score += 1;
     if (/[^A-Za-z0-9]/.test(password)) score += 1;
-    
+
     let label = '';
     let color = '';
-    
+
     switch (true) {
       case (score <= 2):
         label = 'Weak';
@@ -46,7 +36,7 @@ export const PasswordStrengthIndicator = ({ password }: PasswordStrengthIndicato
         label = 'Very Strong';
         color = 'green';
     }
-    
+
     return { score, label, color, percent: (score / 6) * 100 };
   };
 

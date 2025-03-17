@@ -5,36 +5,28 @@ import { Message } from '../../components/ui/message';
 import { Input } from '../../components/ui/input';
 import { loginValidator } from '../../utils/loginValidator';
 import { loginUser } from '../../services/loginUser';
+import { LoginFormData } from '../../types/form.types';
+import { LoginErrors } from '../../types/error.types';
 import Cookies from 'js-cookie';
-
-interface FormData {
-    email: string;
-    password: string;
-}
-
-interface ErrorsType {
-    email: string;
-    password: string;
-}
 
 export const Login: React.FC = () => {
     const [submitMessage, setSubmitMessage] = useState<string>("");
-    const [messageType, setMessageType] = useState<string>("");
+    const [messageType, setMessageType] = useState<'error' | 'success'>('error');
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState<FormData>({
+    const [loginFormData, setLoginFormData] = useState<LoginFormData>({
         email: "",
         password: ""
     });
 
-    const [errors, setErrors] = useState<ErrorsType>({
+    const [errors, setErrors] = useState<LoginErrors>({
         email: "",
         password: ""
     });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
+        setLoginFormData(prev => ({
             ...prev,
             [name]: value
         }));
@@ -48,16 +40,16 @@ export const Login: React.FC = () => {
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const newErrors = {
-            email: loginValidator("email", formData.email),
-            password: loginValidator("password", formData.password),
+            email: loginValidator("email", loginFormData.email),
+            password: loginValidator("password", loginFormData.password),
         };
 
         setErrors(newErrors);
         const newErrorValues = Object.values(newErrors);
         if (newErrorValues.every(error => error === "")) {
-            const userData: FormData = {
-                email: formData.email,
-                password: formData.password,
+            const userData: LoginFormData = {
+                email: loginFormData.email,
+                password: loginFormData.password,
             };
 
             loginUser(userData)
@@ -76,7 +68,7 @@ export const Login: React.FC = () => {
                         navigate('/dashboard');
                     }, 1500);
 
-                    setFormData({
+                    setLoginFormData({
                         email: "",
                         password: "",
                     });
@@ -90,6 +82,9 @@ export const Login: React.FC = () => {
                         setSubmitMessage("Login failed. Please try again.");
                     }
                 });
+        } else {
+            setMessageType("error");
+            setSubmitMessage("Oh no! You have a boo boo:(");
         }
     }
 
@@ -102,7 +97,7 @@ export const Login: React.FC = () => {
                     name="email"
                     type="email"
                     id="emailid"
-                    value={formData.email}
+                    value={loginFormData.email}
                     onChange={handleChange}
                     error={errors.email}
                     required
@@ -112,7 +107,7 @@ export const Login: React.FC = () => {
                     name="password"
                     type="password"
                     id="passwordid"
-                    value={formData.password}
+                    value={loginFormData.password}
                     onChange={handleChange}
                     error={errors.password}
                     required

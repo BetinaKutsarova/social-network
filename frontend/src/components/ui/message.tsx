@@ -1,9 +1,4 @@
-import { ReactNode } from 'react';
-
-interface MessageProps {
-  type: string;
-  children: ReactNode;
-}
+import { MessageProps } from '../../types/message.types';
 
 export const Message = ({ type, children }: MessageProps) => {
   return (

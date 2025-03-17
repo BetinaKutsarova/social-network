@@ -1,16 +1,4 @@
-import { ReactNode, ChangeEvent } from "react";
-
-interface InputProps {
-    label: string;
-    name: string;
-    type: string;
-    id: string;
-    value: string;
-    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    error: string;
-    required?: boolean;
-    children?: ReactNode;
-}
+import { InputProps } from "../../types/input.types";
 
 export const Input = ({ label, name, type, id, value, onChange, error, required }: InputProps) => (
     <div className="input-group">

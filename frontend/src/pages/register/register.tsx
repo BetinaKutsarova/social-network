@@ -5,34 +5,22 @@ import { Message } from '../../components/ui/message';
 import { registerValidator } from '../../utils/registerValidator';
 import { PasswordStrengthIndicator } from '../../components/ui/passwordStrengthIndicator';
 import { registerUser } from '../../services/registerUser';
-
-interface FormData {
-    username: string;
-    email: string;
-    password: string;
-    role: 'user' | 'mentor' | 'admin'
-}
-
-interface FormErrors {
-    username: string;
-    email: string;
-    password: string;
-    role?: string;
-}
+import { RegisterFormData } from '../../types/form.types';
+import { RegisterErrors } from '../../types/error.types';
 
 export const Register: React.FC = () => {
     const [submitMessage, setSubmitMessage] = useState<string>("");
-    const [messageType, setMessageType] = useState<string>("");
+    const [messageType, setMessageType] = useState<'error' | 'success'>('error');
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState<FormData>({
+    const [registerFormData, setRegisterFormData] = useState<RegisterFormData>({
         username: "",
         email: "",
         password: "",
         role: "user"
     });
 
-    const [errors, setErrors] = useState<FormErrors>({
+    const [errors, setErrors] = useState<RegisterErrors>({
         username: "",
         email: "",
         password: "",
@@ -40,7 +28,7 @@ export const Register: React.FC = () => {
 
     function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) {
         const { name, value } = e.target;
-        setFormData(prev => ({
+        setRegisterFormData(prev => ({
             ...prev,
             [name]: value
         }));
@@ -57,21 +45,21 @@ export const Register: React.FC = () => {
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        const newErrors: FormErrors = {
-            username: registerValidator("username", formData.username),
-            email: registerValidator("email", formData.email),
-            password: registerValidator("password", formData.password),
+        const newErrors: RegisterErrors = {
+            username: registerValidator("username", registerFormData.username),
+            email: registerValidator("email", registerFormData.email),
+            password: registerValidator("password", registerFormData.password),
         };
 
         setErrors(newErrors);
         const newErrorValues = Object.values(newErrors);
 
         if (newErrorValues.every(error => error === "")) {
-            const userData: FormData = {
-                username: formData.username,
-                email: formData.email,
-                password: formData.password,
-                role: formData.role
+            const userData: RegisterFormData = {
+                username: registerFormData.username,
+                email: registerFormData.email,
+                password: registerFormData.password,
+                role: registerFormData.role
             };
 
             registerUser(userData)
@@ -84,7 +72,7 @@ export const Register: React.FC = () => {
                         navigate('/login');
                     }, 1500);
 
-                    setFormData({
+                    setRegisterFormData({
                         username: "",
                         email: "",
                         password: "",
@@ -115,7 +103,7 @@ export const Register: React.FC = () => {
                     name="username"
                     type="text"
                     id="usernameid"
-                    value={formData.username}
+                    value={registerFormData.username}
                     onChange={handleChange}
                     error={errors.username}
                     required
@@ -126,7 +114,7 @@ export const Register: React.FC = () => {
                     name="email"
                     type="email"
                     id="emailid"
-                    value={formData.email}
+                    value={registerFormData.email}
                     onChange={handleChange}
                     error={errors.email}
                     required
@@ -137,12 +125,12 @@ export const Register: React.FC = () => {
                     name="password"
                     type="password"
                     id="passwordid"
-                    value={formData.password}
+                    value={registerFormData.password}
                     onChange={handleChange}
                     error={errors.password}
                     required
                 >
-                    <PasswordStrengthIndicator password={formData.password} />
+                    <PasswordStrengthIndicator password={registerFormData.password} />
                 </Input>
 
                 <div className="form-group">
@@ -150,7 +138,7 @@ export const Register: React.FC = () => {
                     <select
                         name="role"
                         id="roleid"
-                        value={formData.role}
+                        value={registerFormData.role}
                         onChange={handleChange}
                         className="form-select"
                         required
