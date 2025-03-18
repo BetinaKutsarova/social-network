@@ -1,4 +1,4 @@
-import { UserAttributes, UserWithoutPassword } from './User';
+import { UserAttributes, UserDTO } from './User';
 import User from './User';
 // import Post from './Post';
 // import Comment from './Comment';
@@ -6,5 +6,5 @@ import User from './User';
 export {
     User,
     UserAttributes,
-    UserWithoutPassword
+    UserDTO
 };

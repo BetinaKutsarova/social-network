@@ -10,7 +10,9 @@ export interface UserAttributes {
   role: 'user' | 'admin' | 'mentor';
 }
 
-export type UserWithoutPassword = Omit<UserAttributes, 'password'>;
+// export type UserWithoutPassword = Omit<UserAttributes, 'password'>;
+
+export type UserDTO = Omit<User, 'password'>;
 
 // Attributes for user creation
 interface UserCreationAttributes extends Optional<UserAttributes, 'id' > {}
@@ -32,16 +34,8 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
     get role(): string {
         return this.getDataValue('role');
     }
-    
-    // Convert to safe JSON without password
-    public toJSON(): UserWithoutPassword {
-      const values = this.get({ plain: true });
-      const { password, ...safeValues } = values;
-      return safeValues as UserWithoutPassword;
-    }
   }
 
-// Initialize User model
 User.init(
   {
     id: {

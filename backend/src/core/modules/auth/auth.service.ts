@@ -1,12 +1,17 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { User } from '../../../models';
-import { UserAttributes, UserWithoutPassword } from '../../../models/User';
+import { UserAttributes, UserDTO } from '../../../models/User';
 import { config } from '../../../config';
 import { redisClient } from '../redis/redis.service';
 
+export interface TokenResponse {
+  id: string;
+  token: string;
+}
+
 export class AuthService {
-  static async register(userData: Omit<UserAttributes, 'id'>): Promise<UserWithoutPassword> {
+  static async register(userData: Omit<UserAttributes, 'id'>): Promise<UserDTO> {
     const existingUser = await User.findOne({ where: { email: userData.email } });
     
     if (existingUser) {
@@ -21,10 +26,10 @@ export class AuthService {
       role: userData.role || 'user'
     });
     
-    return user.toJSON();
+    return user;
   }
 
-  static async login(email: string, password: string) {
+  static async login(email: string, password: string): Promise<TokenResponse> {
     const user = await User.findOne({ where: { email } });
     
     if (!user) {
@@ -33,7 +38,7 @@ export class AuthService {
 
     const userData = user.get({ plain: true });
 
-    const isPasswordValid = await bcrypt.compare(password, userData.password); // cause user.password is undefined due to user.toJSON()
+    const isPasswordValid = await bcrypt.compare(password, userData.password);
     if (!isPasswordValid) {
       throw new Error('Invalid email or password');
     }
@@ -46,8 +51,8 @@ export class AuthService {
     );
 
     return {
-      user: user.toJSON(), // Returns user without password
-      token
+      id: user.id,
+      token: token
     };
   }
 

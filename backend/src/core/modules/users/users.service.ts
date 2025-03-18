@@ -1,22 +1,26 @@
 import bcrypt from 'bcryptjs';
 import { User } from '../../../models';
-import { UserAttributes, UserWithoutPassword } from '../../../models';
+import { UserAttributes, UserDTO } from '../../../models';
 
 export class UserService {
     /**
      * Get all users
      */
-    static async getAll(): Promise<UserWithoutPassword[]> {
+    static async getAll(): Promise<UserDTO[]> {
         const users = await User.findAll();
-        return users.map(user => user.toJSON());
+        return users;
     }
 
     /**
      * Get user by ID
      */
-    static async getById(id: string): Promise<UserWithoutPassword | null> {
-        const user = await User.findByPk(id);
-        return user ? user.toJSON() : null;
+    static async getById(id: string): Promise<UserDTO | null> {
+        const user = await User.findOne({
+            where: { id },
+            attributes: { exclude: ['password'] }
+        });
+
+        return user;
     }
 
     /**
@@ -29,7 +33,7 @@ export class UserService {
     /**
      * Create a new user
      */
-    static async create(userData: Omit<UserAttributes, 'id' | 'createdAt'>): Promise<UserWithoutPassword> {
+    static async create(userData: Omit<UserAttributes, 'id' | 'createdAt'>): Promise<UserDTO> {
         const existingUser = await User.findOne({ where: { email: userData.email } });
         if (existingUser) {
             throw new Error('User with this email already exists');
@@ -42,13 +46,13 @@ export class UserService {
             password: hashedPassword
         });
 
-        return user.toJSON();
+        return user;
     }
 
     /**
      * Update user
      */
-    static async update(id: string, userData: Partial<UserAttributes>): Promise<UserWithoutPassword | null> {
+    static async update(id: string, userData: Partial<UserAttributes>): Promise<UserDTO | null> {
         if (userData.password) {
             userData.password = await bcrypt.hash(userData.password, 10);
         }
@@ -58,7 +62,7 @@ export class UserService {
 
         await user.update(userData);
 
-        return user.toJSON();
+        return user;
     }
 
     /**
