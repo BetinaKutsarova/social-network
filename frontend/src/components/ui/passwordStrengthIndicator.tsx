@@ -74,11 +74,11 @@ export const PasswordStrengthIndicator = ({ password }: PasswordStrengthIndicato
           )}
         </div>
       </div>
-      {password && (
+      {password ? (
         <div className="strength-label" style={{ color: strength.color }}>
           Password strength: <strong>{strength.label}</strong>
-        </div>
-      )}
+          </div>) : <div className="strength-label"></div>
+      }
     </div>
   );
 };

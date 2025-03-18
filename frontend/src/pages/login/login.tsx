@@ -79,16 +79,17 @@ export const Login: React.FC = () => {
                     if (error.response && error.response.data && error.response.data.message) {
                         setSubmitMessage(error.response.data.message);
                     } else {
-                        setSubmitMessage("Login failed. Please try again.");
+                        setSubmitMessage("Incorrect email or password");
                     }
                 });
         } else {
             setMessageType("error");
-            setSubmitMessage("Oh no! You have a boo boo:(");
+            setSubmitMessage("Please provide a valid email and password");
         }
     }
 
     return (
+        <div className='auth-container'>
         <div className="form-container">
             <h1 className="title">Login</h1>
             <form onSubmit={handleSubmit} className="form">
@@ -116,6 +117,7 @@ export const Login: React.FC = () => {
                 {submitMessage && <Message type={messageType}>{submitMessage}</Message>}
                 <p>Don&apos;t have an account? <Link to="/register">Register here</Link></p>
             </form>
+        </div>
         </div>
     );
 };

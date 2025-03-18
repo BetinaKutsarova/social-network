@@ -25,7 +25,7 @@ services:
       - postgres
       - redis
       - rabbitmq
-    command: sh -c "npm run build && npm start"
+    command: npm run dev
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}

@@ -95,45 +95,52 @@ export const Register: React.FC = () => {
     }
 
     return (
+        <div className='auth-container'>
         <div className="form-container">
             <h1 className="title">Register</h1>
             <form onSubmit={handleSubmit} className="form">
-                <Input
-                    label="Username"
-                    name="username"
-                    type="text"
-                    id="usernameid"
-                    value={registerFormData.username}
-                    onChange={handleChange}
-                    error={errors.username}
-                    required
-                />
+                <div>
+                    <Input
+                        label="Username"
+                        name="username"
+                        type="text"
+                        id="usernameid"
+                        value={registerFormData.username}
+                        onChange={handleChange}
+                        error={errors.username}
+                        required
+                    />
+                </div>
 
-                <Input
-                    label="Email"
-                    name="email"
-                    type="email"
-                    id="emailid"
-                    value={registerFormData.email}
-                    onChange={handleChange}
-                    error={errors.email}
-                    required
-                />
+                <div>
+                    <Input
+                        label="Email"
+                        name="email"
+                        type="email"
+                        id="emailid"
+                        value={registerFormData.email}
+                        onChange={handleChange}
+                        error={errors.email}
+                        required
+                    />
+                </div>
 
-                <Input
-                    label="Password"
-                    name="password"
-                    type="password"
-                    id="passwordid"
-                    value={registerFormData.password}
-                    onChange={handleChange}
-                    error={errors.password}
-                    required
-                >
-                    <PasswordStrengthIndicator password={registerFormData.password} />
-                </Input>
+                <div>
+                    <Input
+                        label="Password"
+                        name="password"
+                        type="password"
+                        id="passwordid"
+                        value={registerFormData.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                        required
+                    />
+                </div>
 
-                <div className="form-group">
+                <PasswordStrengthIndicator password={registerFormData.password} />
+
+                <div className='input-group'>
                     <label htmlFor="roleid">Role</label>
                     <select
                         name="role"
@@ -152,6 +159,7 @@ export const Register: React.FC = () => {
                 {submitMessage && <Message type={messageType}>{submitMessage}</Message>}
                 <p>Already have an account? <Link to="/login">Login here</Link></p>
             </form>
+        </div>
         </div>
     );
 }

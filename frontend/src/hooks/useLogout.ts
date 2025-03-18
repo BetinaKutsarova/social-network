@@ -10,7 +10,7 @@ export const useLogout = () => {
             const token = Cookies.get('auth_token');
             
             if (token) {
-                await axios.post('/api/auth/logout', {}, {
+                await axios.post(`${import.meta.env.VITE_API_URL}/auth/logout`, {}, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -19,7 +19,7 @@ export const useLogout = () => {
             
             Cookies.remove('auth_token');
             navigate('/login');
-            
+
         } catch (error) {
             console.error('Logout error:', error);
             Cookies.remove('auth_token');

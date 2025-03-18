@@ -11,7 +11,7 @@ export const Input = ({ label, name, type, id, value, onChange, error, required 
             onChange={onChange}
             required={required}
         />
-        {error && <span className="error">{error}</span>}
+        {error ? <span className="error">{error}</span>: <span className="error"></span>}
     </div>
 );
 
