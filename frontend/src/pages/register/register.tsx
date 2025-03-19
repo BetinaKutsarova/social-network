@@ -151,7 +151,7 @@ export const Register: React.FC = () => {
                         required
                     >
                         <option value="user">User</option>
-                        <option value="mentor">Mentor</option>
+                        <option value="trainer">Trainer</option>
                     </select>
                 </div>
 

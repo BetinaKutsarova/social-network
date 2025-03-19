@@ -4,10 +4,10 @@ import sequelize from '../core/db';
 // User attributes interface
 export interface UserAttributes {
   id: string;
-  name: string;
+  username: string;
   email: string;
   password: string;
-  role: 'user' | 'admin' | 'mentor';
+  role: 'user' | 'admin' | 'trainer';
 }
 
 // export type UserWithoutPassword = Omit<UserAttributes, 'password'>;
@@ -24,7 +24,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> {
     }
     
     get name(): string {
-      return this.getDataValue('name');
+      return this.getDataValue('username');
     }
     
     get email(): string {
@@ -43,7 +43,7 @@ User.init(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    name: {
+    username: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
@@ -60,7 +60,7 @@ User.init(
       allowNull: false
     },
     role: {
-      type: DataTypes.ENUM('user', 'admin', 'mentor'),
+      type: DataTypes.ENUM('user', 'admin', 'trainer'),
       allowNull: false,
       defaultValue: 'user'
     },

@@ -15,7 +15,7 @@ export async function seedDatabase() {
 
             // Create admin user
             await User.create({
-                name: 'Admin User',
+                username: 'Admin User',
                 email: 'admin@example.com',
                 password: hashedPassword,
                 role: 'admin'
@@ -35,7 +35,7 @@ export async function seedDatabase() {
                 const hashedPassword = await bcrypt.hash('password123', 10);
 
                 await User.create({
-                    name: `Test ${email.split('@')[0]}`,
+                    username: `Test ${email.split('@')[0]}`,
                     email,
                     password: hashedPassword,
                     role: 'user'

@@ -4,7 +4,7 @@ interface UserData {
     username: string;
     email: string;
     password: string;
-    role: 'user' | 'mentor' | 'admin'
+    role: 'user' | 'trainer' | 'admin'
 }
 
 /**
@@ -16,7 +16,7 @@ interface UserData {
 export const registerUser = async (userData: UserData) => {
     try {
         const apiData = {
-            name: userData.username,
+            username: userData.username,
             email: userData.email,
             password: userData.password,
             role: userData.role

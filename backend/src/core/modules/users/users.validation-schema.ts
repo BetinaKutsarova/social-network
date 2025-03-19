@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 
 export const createUserValidationSchema = yup.object({
-  name: yup.string().required('Name is required'),
+  username: yup.string().required('Username is required'),
   email: yup.string().email('Invalid email format').required('Email is required'),
   password: yup.string()
     .min(8, 'Password must be at least 8 characters')
@@ -10,7 +10,7 @@ export const createUserValidationSchema = yup.object({
 });
 
 export const updateUserValidationSchema = yup.object({
-  name: yup.string(),
+  username: yup.string(),
   email: yup.string().email('Invalid email format'),
   password: yup.string().min(8, 'Password must be at least 8 characters'),
   role: yup.string().oneOf(['admin', 'user'], 'Invalid role')
