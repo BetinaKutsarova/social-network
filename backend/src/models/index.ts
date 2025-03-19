@@ -1,4 +1,4 @@
-import { UserAttributes, UserDTO } from './User';
+import { UserAttributes, UserCreationAttributes, UserDTO } from './User';
 import User from './User';
 import PostMedia from './PostMedia';
 import PostHashtag from './PostHashtag';
@@ -12,6 +12,7 @@ import Comment from './Comment';
 export {
     User,
     UserAttributes,
+		UserCreationAttributes,
     UserDTO,
 
 		PostMedia,

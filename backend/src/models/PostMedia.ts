@@ -1,14 +1,14 @@
-import { Model, DataTypes, Optional } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import sequelize from '../core/db';
 import Post from './Post';
 
-interface PostMediaAttributes {
+export interface PostMediaAttributes {
 	id: string;
 	postId: string;
 	mediaUrl: string;
 }
 
-interface PostMediaCreationAttributes extends Optional<PostMediaAttributes, 'id'> { }
+export type PostMediaCreationAttributes = Omit<PostMediaAttributes, 'id'>;
 
 class PostMedia extends Model<PostMediaAttributes, PostMediaCreationAttributes> {
 	declare id: string;

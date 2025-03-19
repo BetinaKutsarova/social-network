@@ -1,15 +1,15 @@
-import { Model, DataTypes, Optional } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import sequelize from '../core/db';
 import User from './User';
 import Comment from './Comment';
 
-interface LikeAttributes {
+export interface LikeAttributes {
   id: string;
   userId: string;
   commentId?: string;
 }
 
-interface LikeCreationAttributes extends Optional<LikeAttributes, 'id'> {}
+export type LikeCreationAttributes = Omit<LikeAttributes, 'id'>
 
 class Like extends Model<LikeAttributes, LikeCreationAttributes> {
   declare id: string;

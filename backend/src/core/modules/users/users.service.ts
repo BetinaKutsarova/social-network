@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { User } from '../../../models';
-import { UserAttributes, UserDTO } from '../../../models';
+import { UserAttributes, UserCreationAttributes, UserDTO } from '../../../models';
 
 export class UserService {
     /**
@@ -33,7 +33,7 @@ export class UserService {
     /**
      * Create a new user
      */
-    static async create(userData: Omit<UserAttributes, 'id' | 'createdAt'>): Promise<UserDTO> {
+    static async create(userData: UserCreationAttributes): Promise<UserDTO> {
         const existingUser = await User.findOne({ where: { email: userData.email } });
         if (existingUser) {
             throw new Error('User with this email already exists');

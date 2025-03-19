@@ -1,8 +1,8 @@
-import { Model, DataTypes, Optional } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import sequelize from '../core/db';
 import User from './User';
 
-interface MessageAttributes {
+export interface MessageAttributes {
   id: string;
   senderId: string;
   recipientId: string;
@@ -10,7 +10,7 @@ interface MessageAttributes {
   isRead: boolean;
 }
 
-interface MessageCreationAttributes extends Optional<MessageAttributes, 'id' | 'isRead'> {}
+export type MessageCreationAttributes = Omit<MessageAttributes, 'id'>
 
 class Message extends Model<MessageAttributes, MessageCreationAttributes> {
   declare id: string;

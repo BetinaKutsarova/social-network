@@ -1,4 +1,4 @@
-import { Model, DataTypes, Optional } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import sequelize from '../core/db';
 
 // User attributes interface
@@ -12,7 +12,7 @@ export interface UserAttributes {
 
 export type UserDTO = Omit<User, 'password'>;
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> { }
+export type UserCreationAttributes = Omit<UserAttributes, 'id'>;
 
 // getter methods for more controlled access for now
 class User extends Model<UserAttributes, UserCreationAttributes> {

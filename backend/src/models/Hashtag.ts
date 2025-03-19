@@ -1,12 +1,12 @@
-import { Model, DataTypes, Optional } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import sequelize from '../core/db';
 
-interface HashtagAttributes {
+export interface HashtagAttributes {
 	id: string;
 	name: string;
 }
 
-interface HashtagCreationAttributes extends Optional<HashtagAttributes, 'id'> { }
+export type HashtagCreationAttributes = Omit<HashtagAttributes, 'id'>
 
 class Hashtag extends Model<HashtagAttributes, HashtagCreationAttributes> {
 	declare id: string;

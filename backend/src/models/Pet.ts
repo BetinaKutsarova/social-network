@@ -1,8 +1,8 @@
-import { Model, DataTypes, Optional } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import sequelize from '../core/db';
 import User from './User';
 
-interface PetAttributes {
+export interface PetAttributes {
 	id: string;
 	userId: string;
 	name: string;
@@ -13,7 +13,7 @@ interface PetAttributes {
 	avatarUrl?: string;
 }
 
-interface PetCreationAttributes extends Optional<PetAttributes, 'id'> { }
+export type PetCreationAttributes = Omit<PetAttributes, 'id'>
 
 class Pet extends Model<PetAttributes, PetCreationAttributes> {
 	declare id: string;

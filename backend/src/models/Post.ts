@@ -1,15 +1,15 @@
-import { Model, DataTypes, Optional } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import sequelize from '../core/db';
 import User from './User';
 
 
-interface PostAttributes {
+export interface PostAttributes {
   id: string;
   userId: string;
   content: string;
 }
 
-interface PostCreationAttributes extends Optional<PostAttributes, 'id'> {}
+export type PostCreationAttributes = Omit<PostAttributes, 'id'>
 
 class Post extends Model<PostAttributes, PostCreationAttributes> {
   declare id: string;
