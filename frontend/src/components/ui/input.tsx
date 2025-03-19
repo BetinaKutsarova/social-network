@@ -1,4 +1,4 @@
-import { InputProps } from "../../types/input.types";
+import { InputProps } from "../../interfaces/input";
 
 export const Input = ({ label, name, type, id, value, onChange, error, required }: InputProps) => (
     <div className="input-group">

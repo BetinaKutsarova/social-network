@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { PasswordStrengthIndicatorProps, StrengthResult } from '../../types/passwordIndicator.types';
+import { PasswordStrengthIndicatorProps, StrengthResult } from '../../interfaces/passwordIndicator';
 
 export const PasswordStrengthIndicator = ({ password }: PasswordStrengthIndicatorProps) => {
   const [showTip, setShowTip] = useState<boolean>(false);

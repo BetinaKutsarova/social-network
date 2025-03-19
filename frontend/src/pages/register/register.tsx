@@ -5,8 +5,8 @@ import { Message } from '../../components/ui/message';
 import { registerValidator } from '../../utils/registerValidator';
 import { PasswordStrengthIndicator } from '../../components/ui/passwordStrengthIndicator';
 import { registerUser } from '../../services/registerUser';
-import { RegisterFormData } from '../../types/form.types';
-import { RegisterErrors } from '../../types/error.types';
+import { RegisterFormData } from '../../interfaces/form';
+import { RegisterErrors } from '../../interfaces/error';
 
 export const Register: React.FC = () => {
     const [submitMessage, setSubmitMessage] = useState<string>("");
