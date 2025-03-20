@@ -5,8 +5,8 @@ import { Message } from '../../components/ui/message';
 import { Input } from '../../components/ui/input';
 import { loginValidator } from '../../utils/loginValidator';
 import { loginUser } from '../../services/loginUser';
-import { LoginFormData } from '../../types/form.types';
-import { LoginErrors } from '../../types/error.types';
+import { LoginFormData } from '../../interfaces/form';
+import { LoginErrors } from '../../interfaces/error';
 import Cookies from 'js-cookie';
 
 export const Login: React.FC = () => {

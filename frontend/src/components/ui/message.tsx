@@ -1,4 +1,4 @@
-import { MessageProps } from '../../types/message.types';
+import { MessageProps } from '../../interfaces/message';
 
 export const Message = ({ type, children }: MessageProps) => {
   return (

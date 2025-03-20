@@ -8,7 +8,7 @@ import type {
     TrendingTopic, 
     SuggestionUser, 
     NavItemProps, 
-    FeedItemProps } from '../../types/dashboard.types'
+    FeedItemProps } from '../../interfaces/dashboard'
 
 
 export const Dashboard: React.FC = () => {
