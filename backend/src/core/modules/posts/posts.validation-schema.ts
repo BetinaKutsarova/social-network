@@ -2,7 +2,6 @@ import * as yup from 'yup';
 import { PostCreationAttributes, PostUpdateAttributes } from '../../../models';
 
 export const createPostValidationSchema: yup.ObjectSchema<PostCreationAttributes> = yup.object({
-  userId: yup.string().uuid('Invalid userId format').required('User ID is required'),
   content: yup.string().required('Content is required')
 }).test(
   'valid-content-length',
@@ -11,7 +10,6 @@ export const createPostValidationSchema: yup.ObjectSchema<PostCreationAttributes
 );
 
 export const updatePostValidationSchema: yup.ObjectSchema<PostUpdateAttributes> = yup.object({
-  userId: yup.string().uuid('Invalid userId format').optional(),
   content: yup.string().optional()
 }).test(
   'at-least-one-field',

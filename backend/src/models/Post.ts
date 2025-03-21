@@ -8,8 +8,8 @@ export interface PostAttributes {
   content: string;
 }
 
-export type PostCreationAttributes = Omit<PostAttributes, 'id'>
-export type PostUpdateAttributes = Partial<PostCreationAttributes>
+export type PostCreationAttributes = Omit<PostAttributes, 'id' | 'userId'>;
+export type PostUpdateAttributes = Partial<Omit<PostCreationAttributes, 'userId'>>;
 
 class Post extends Model<PostAttributes, PostCreationAttributes> {
   declare id: string;
