@@ -1,7 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../core/db';
 
-// User attributes interface
 export interface UserAttributes {
 	id: string;
 	username: string;
@@ -11,10 +10,12 @@ export interface UserAttributes {
 }
 
 export type UserDTO = Omit<User, 'password'>;
-
 export type UserCreationAttributes = Omit<UserAttributes, 'id'>;
+export type UserUpdateAttributes = Partial<UserCreationAttributes>;
+export type UserLoginAttributes = Omit<UserAttributes, 'id' | 'username' | 'role'>;
 
-// getter methods for more controlled access for now
+
+// getter methods for more controlled access for now, the model class always takes 2 types - with all attributes and with creation attributes
 class User extends Model<UserAttributes, UserCreationAttributes> {
 	get id(): string {
 		return this.getDataValue('id');

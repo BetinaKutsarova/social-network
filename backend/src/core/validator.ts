@@ -1,18 +1,17 @@
 import { Context, Next } from 'koa';
 import { Schema, ValidationError } from 'yup';
 
-export function validator(schema: Schema) {
-  return async (ctx: Context, next: Next) => {
+export function validator<T>(schema: Schema<T>) { // use with all schemas, accepts generic type that defines the ctx
+  return async (ctx: Context & { request: { body: T } }, next: Next) => {
     try {
       const data = ctx.request.body;
-
-      const validatedData = await schema.validate(data, {
+      const validatedData: T = await schema.validate(data, {
         abortEarly: false,
         stripUnknown: true
       });
 
       ctx.request.body = validatedData;
-      return next();
+      await next();
 
     } catch (error) {
       if (error instanceof ValidationError) {

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { User } from '../../../models';
-import { UserAttributes, UserCreationAttributes, UserDTO } from '../../../models';
+import { UserCreationAttributes, UserUpdateAttributes, UserDTO } from '../../../models';
 
 export class UserService {
     /**
@@ -26,9 +26,9 @@ export class UserService {
     /**
      * Get user by email
      */
-    // static async getByEmail(email: string): Promise<User | null> {
-    //     return await User.findOne({ where: { email } });
-    // }
+    static async getByEmail(email: string): Promise<User | null> {
+        return await User.findOne({ where: { email } });
+    }
 
     /**
      * Create a new user
@@ -52,7 +52,7 @@ export class UserService {
     /**
      * Update user
      */
-    static async update(id: string, userData: Partial<UserAttributes>): Promise<UserDTO | null> {
+    static async update(id: string, userData: UserUpdateAttributes): Promise<UserDTO | null> {
         if (userData.password) {
             userData.password = await bcrypt.hash(userData.password, 10);
         }
