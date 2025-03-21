@@ -1,7 +1,8 @@
 import Router from 'koa-router';
+import { validator } from '../../validator';
 import { authMiddleware } from '../auth';
 import { PostAttributes, PostCreationAttributes } from '../../../models/Post';
-import { PostService } from './post.service';
+import { PostService } from './posts.service';
 
 
 export const postRouter = new Router({

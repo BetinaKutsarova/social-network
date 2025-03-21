@@ -7,7 +7,7 @@ import { runSeeder } from './seed';
 
 import { authRouter } from './core/modules/auth';
 import { userRouter } from './core/modules/users';
-import { postRouter } from './core/modules/post/post.router';
+import { postRouter } from './core/modules/posts/posts.router';
 
 console.log('userRouter imported successfully:', !!userRouter);
 

@@ -9,11 +9,16 @@ export interface UserAttributes {
 	role: 'user' | 'admin' | 'trainer';
 }
 
-export type UserDTO = Omit<User, 'password'>;
+export type UserDTO = Omit<UserAttributes, 'password'>;
 export type UserCreationAttributes = Omit<UserAttributes, 'id'>;
 export type UserUpdateAttributes = Partial<UserCreationAttributes>;
 export type UserLoginAttributes = Omit<UserAttributes, 'id' | 'username' | 'role'>;
 
+// to convert model instances to UserDTO
+export function toDTO(user: User): UserDTO {
+	const { password, ...userDTO } = user.get({ plain: true });
+	return userDTO;
+}
 
 // getter methods for more controlled access for now, the model class always takes 2 types - with all attributes and with creation attributes
 class User extends Model<UserAttributes, UserCreationAttributes> {

@@ -33,16 +33,20 @@ authRouter.post(
 	'/login',
 	validator(loginValidationSchema),
 	async (ctx) => {
-
-
 		try {
 			const { email, password } = ctx.request.body;
 			const result = await AuthService.login(email, password);
 
-			ctx.body = {
-				message: 'Login successful',
-				...result
-			};
+			ctx.cookies.set('auth_token', result.token, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'strict',
+				maxAge: 24 * 60 * 60 * 1000,  // 1 day
+			});
+
+			ctx.status = 200;
+			ctx.body = { success: true, message: 'Logged in successfully' };
+
 		} catch (error: unknown) {
 			ctx.status = 401;
 			ctx.body = { error: { message: error instanceof Error ? error.message : 'Unknown error' } };
@@ -54,16 +58,22 @@ authRouter.post(
 	'/logout',
 	async (ctx) => {
 		try {
-			const authHeader = ctx.headers.authorization;
+			const token = ctx.cookies.get('auth_token');
 
-			if (!authHeader || !authHeader.startsWith('Bearer ')) {
+			if (!token) {
 				ctx.status = 400;
 				ctx.body = { success: false, message: 'No authentication token provided' };
 				return;
 			}
 
-			const token = authHeader.substring(7);
 			await AuthService.logout(token);
+
+			ctx.cookies.set('auth_token', '', {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				maxAge: 0, // expire immediately
+				sameSite: 'strict'
+			});
 
 			ctx.status = 200;
 			ctx.body = { success: true, message: 'Logged out successfully' };
@@ -71,4 +81,5 @@ authRouter.post(
 			ctx.status = 500;
 			ctx.body = { success: false, message: 'Failed to process logout' };
 		}
-	});
+	}
+);
