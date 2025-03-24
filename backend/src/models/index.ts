@@ -5,6 +5,7 @@ import PostHashtag from './PostHashtag';
 import Post from './Post';
 import { PostAttributes, PostCreationAttributes, PostUpdateAttributes } from './Post';
 import Pet from './Pet';
+import { PetAttributes, PetCreationAttributes, PetUpdateAttributes } from './Pet';
 import Message from './Message';
 import Like from './Like';
 import Hashtag from './Hashtag';
@@ -26,6 +27,9 @@ export {
 	PostCreationAttributes,
 	PostUpdateAttributes,
 	Pet,
+	PetAttributes,
+	PetCreationAttributes,
+	PetUpdateAttributes,
 	Message,
 	Like,
 	Hashtag,

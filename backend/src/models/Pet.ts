@@ -13,7 +13,8 @@ export interface PetAttributes {
 	avatarUrl?: string;
 }
 
-export type PetCreationAttributes = Omit<PetAttributes, 'id'>
+export type PetCreationAttributes = Omit<PetAttributes, 'id' | 'userId'>;
+export type PetUpdateAttributes = Partial<PetCreationAttributes>;
 
 class Pet extends Model<PetAttributes, PetCreationAttributes> {
 	declare id: string;
@@ -75,8 +76,8 @@ Pet.init(
 	}
 );
 
-//alias for user
 Pet.belongsTo(User, { foreignKey: 'userId', as: 'owner' });
+User.hasMany(Pet, { foreignKey: 'userId', as: 'pets' });
 
 export default Pet;
 

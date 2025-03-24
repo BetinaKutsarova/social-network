@@ -1,5 +1,5 @@
 import { Post, User } from '../../../models';
-import { PostAttributes, PostCreationAttributes } from '../../../models/Post';
+import { PostAttributes, PostCreationAttributes, PostUpdateAttributes } from '../../../models/Post';
 
 export class PostService {
 	static async getAll(): Promise<PostAttributes[]> {
@@ -7,7 +7,7 @@ export class PostService {
 			include: [{
 				model: User,
 				as: 'author',
-				attributes: ['id', 'name', 'email']
+				attributes: ['id', 'username', 'email']
 			}]
 		});
 		return posts;
@@ -19,19 +19,19 @@ export class PostService {
 			include: [{
 				model: User,
 				as: 'author',
-				attributes: ['id', 'name', 'email']
+				attributes: ['id', 'username', 'email']
 			}]
 		});
 
 		return post;
 	}
 
-	static async create(postData: PostCreationAttributes): Promise<PostAttributes> {
+	static async create(postData: PostCreationAttributes): Promise<PostCreationAttributes> {
 		const post = await Post.create(postData);
 		return post;
 	}
 
-	static async update(id: string, postData: Partial<PostAttributes>): Promise<PostAttributes | null> {
+	static async update(id: string, postData: Partial<PostUpdateAttributes>): Promise<PostAttributes | null> {
 		const post = await Post.findByPk(id);
 		if (!post) return null;
 

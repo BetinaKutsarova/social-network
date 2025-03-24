@@ -50,6 +50,8 @@ export class AuthService {
 			{ expiresIn: '24h' }
 		);
 
+		console.log(token);
+
 		return {
 			id: user.id,
 			token: token
