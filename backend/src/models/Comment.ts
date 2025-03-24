@@ -11,6 +11,7 @@ export interface CommentAttributes {
 }
 
 export type CommentCreationAttributes = Omit<CommentAttributes, 'id'>
+export type CommentUpdateAttributes = Partial<Omit<CommentAttributes, 'id' | 'postId' | 'userId'>>;
 
 class Comment extends Model<CommentAttributes, CommentCreationAttributes> {
   declare id: string;

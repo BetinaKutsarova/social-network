@@ -10,6 +10,7 @@ import Message from './Message';
 import Like from './Like';
 import Hashtag from './Hashtag';
 import Comment from './Comment';
+import { CommentAttributes, CommentCreationAttributes, CommentUpdateAttributes } from './Comment';
 
 export {
 	User,
@@ -33,5 +34,8 @@ export {
 	Message,
 	Like,
 	Hashtag,
-	Comment
+	Comment,
+	CommentAttributes,
+	CommentCreationAttributes,
+	CommentUpdateAttributes
 };
