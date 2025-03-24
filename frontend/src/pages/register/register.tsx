@@ -147,7 +147,7 @@ export const Register: React.FC = () => {
                         id="roleid"
                         value={registerFormData.role}
                         onChange={handleChange}
-                        className="form-select"
+                        className="form-select animal-dropdown"
                         required
                     >
                         <option value="user">User</option>

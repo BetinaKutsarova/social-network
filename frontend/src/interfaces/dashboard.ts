@@ -7,7 +7,7 @@ export interface UserData {
     posts: number;
 }
 
-export interface FeedItem {
+export interface FeedItemType {
     id: number;
     author: string;
     username: string;
@@ -40,5 +40,5 @@ export interface NavItemProps {
 }
 
 export interface FeedItemProps {
-    item: FeedItem;
+    item: FeedItemType;
 }
