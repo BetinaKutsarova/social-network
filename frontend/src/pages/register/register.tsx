@@ -9,157 +9,157 @@ import { RegisterFormData } from '../../interfaces/form';
 import { RegisterErrors } from '../../interfaces/error';
 
 export const Register: React.FC = () => {
-    const [submitMessage, setSubmitMessage] = useState<string>("");
-    const [messageType, setMessageType] = useState<'error' | 'success'>('error');
-    const navigate = useNavigate();
+	const [submitMessage, setSubmitMessage] = useState<string>("");
+	const [messageType, setMessageType] = useState<'error' | 'success'>('error');
+	const navigate = useNavigate();
 
-    const [registerFormData, setRegisterFormData] = useState<RegisterFormData>({
-        username: "",
-        email: "",
-        password: "",
-        role: "user"
-    });
+	const [registerFormData, setRegisterFormData] = useState<RegisterFormData>({
+		username: "",
+		email: "",
+		password: "",
+		role: "user"
+	});
 
-    const [errors, setErrors] = useState<RegisterErrors>({
-        username: "",
-        email: "",
-        password: "",
-    });
+	const [errors, setErrors] = useState<RegisterErrors>({
+		username: "",
+		email: "",
+		password: "",
+	});
 
-    function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) {
-        const { name, value } = e.target;
-        setRegisterFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+	function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) {
+		const { name, value } = e.target;
+		setRegisterFormData(prev => ({
+			...prev,
+			[name]: value
+		}));
 
-        if (name === 'username' || name === 'email' || name === 'password') {
-            const error = registerValidator(name as 'username' | 'email' | 'password', value);
-            setErrors(prev => ({
-                ...prev,
-                [name]: error
-            }));
-        }
-    }
+		if (name === 'username' || name === 'email' || name === 'password') {
+			const error = registerValidator(name as 'username' | 'email' | 'password', value);
+			setErrors(prev => ({
+				...prev,
+				[name]: error
+			}));
+		}
+	}
 
-    function handleSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
+	function handleSubmit(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault();
 
-        const newErrors: RegisterErrors = {
-            username: registerValidator("username", registerFormData.username),
-            email: registerValidator("email", registerFormData.email),
-            password: registerValidator("password", registerFormData.password),
-        };
+		const newErrors: RegisterErrors = {
+			username: registerValidator("username", registerFormData.username),
+			email: registerValidator("email", registerFormData.email),
+			password: registerValidator("password", registerFormData.password),
+		};
 
-        setErrors(newErrors);
-        const newErrorValues = Object.values(newErrors);
+		setErrors(newErrors);
+		const newErrorValues = Object.values(newErrors);
 
-        if (newErrorValues.every(error => error === "")) {
-            const userData: RegisterFormData = {
-                username: registerFormData.username,
-                email: registerFormData.email,
-                password: registerFormData.password,
-                role: registerFormData.role
-            };
+		if (newErrorValues.every(error => error === "")) {
+			const userData: RegisterFormData = {
+				username: registerFormData.username,
+				email: registerFormData.email,
+				password: registerFormData.password,
+				role: registerFormData.role
+			};
 
-            registerUser(userData)
-                .then((response) => {
-                    console.log('Registration successful:', response);
-                    setMessageType("success");
-                    setSubmitMessage("Yay! Successfully registered!");
+			registerUser(userData)
+				.then((response) => {
+					console.log('Registration successful:', response);
+					setMessageType("success");
+					setSubmitMessage("Yay! Successfully registered!");
 
-                    setTimeout(() => {
-                        navigate('/login');
-                    }, 1500);
+					setTimeout(() => {
+						navigate('/login');
+					}, 1500);
 
-                    setRegisterFormData({
-                        username: "",
-                        email: "",
-                        password: "",
-                        role: "user"
-                    });
-                })
-                .catch(error => {
-                    console.error('Registration error:', error);
-                    setMessageType("error");
-                    if (error.response && error.response.data && error.response.data.message) {
-                        setSubmitMessage(error.response.data.message);
-                    } else {
-                        setSubmitMessage("Registration failed. Please try again.");
-                    }
-                });
-        } else {
-            setMessageType("error");
-            setSubmitMessage("Oh no! You have a boo boo:(");
-        }
-    }
+					setRegisterFormData({
+						username: "",
+						email: "",
+						password: "",
+						role: "user"
+					});
+				})
+				.catch(error => {
+					console.error('Registration error:', error);
+					setMessageType("error");
+					if (error.response && error.response.data && error.response.data.message) {
+						setSubmitMessage(error.response.data.message);
+					} else {
+						setSubmitMessage("Registration failed. Please try again.");
+					}
+				});
+		} else {
+			setMessageType("error");
+			setSubmitMessage("Oh no! You have a boo boo:(");
+		}
+	}
 
-    return (
-        <div className='auth-container'>
-        <div className="form-container">
-            <h1 className="title">Register</h1>
-            <form onSubmit={handleSubmit} className="form">
-                <div>
-                    <Input
-                        label="Username"
-                        name="username"
-                        type="text"
-                        id="usernameid"
-                        value={registerFormData.username}
-                        onChange={handleChange}
-                        error={errors.username}
-                        required
-                    />
-                </div>
+	return (
+		<div className='auth-container'>
+			<div className="form-container">
+				<h1 className="title">Register</h1>
+				<form onSubmit={handleSubmit} className="form">
+					<div>
+						<Input
+							label="Username"
+							name="username"
+							type="text"
+							id="usernameid"
+							value={registerFormData.username}
+							onChange={handleChange}
+							error={errors.username}
+							required
+						/>
+					</div>
 
-                <div>
-                    <Input
-                        label="Email"
-                        name="email"
-                        type="email"
-                        id="emailid"
-                        value={registerFormData.email}
-                        onChange={handleChange}
-                        error={errors.email}
-                        required
-                    />
-                </div>
+					<div>
+						<Input
+							label="Email"
+							name="email"
+							type="email"
+							id="emailid"
+							value={registerFormData.email}
+							onChange={handleChange}
+							error={errors.email}
+							required
+						/>
+					</div>
 
-                <div>
-                    <Input
-                        label="Password"
-                        name="password"
-                        type="password"
-                        id="passwordid"
-                        value={registerFormData.password}
-                        onChange={handleChange}
-                        error={errors.password}
-                        required
-                    />
-                </div>
+					<div>
+						<Input
+							label="Password"
+							name="password"
+							type="password"
+							id="passwordid"
+							value={registerFormData.password}
+							onChange={handleChange}
+							error={errors.password}
+							required
+						/>
+					</div>
 
-                <PasswordStrengthIndicator password={registerFormData.password} />
+					<PasswordStrengthIndicator password={registerFormData.password} />
 
-                <div className='input-group'>
-                    <label htmlFor="roleid">Role</label>
-                    <select
-                        name="role"
-                        id="roleid"
-                        value={registerFormData.role}
-                        onChange={handleChange}
-                        className="form-select animal-dropdown"
-                        required
-                    >
-                        <option value="user">User</option>
-                        <option value="trainer">Trainer</option>
-                    </select>
-                </div>
+					<div className='input-group'>
+						<label htmlFor="roleid">Role</label>
+						<select
+							name="role"
+							id="roleid"
+							value={registerFormData.role}
+							onChange={handleChange}
+							className="form-select animal-dropdown"
+							required
+						>
+							<option value="user">User</option>
+							<option value="trainer">Trainer</option>
+						</select>
+					</div>
 
-                <button type="submit">Register</button>
-                {submitMessage && <Message type={messageType}>{submitMessage}</Message>}
-                <p>Already have an account? <Link to="/login">Login here</Link></p>
-            </form>
-        </div>
-        </div>
-    );
+					<button type="submit">Register</button>
+					{submitMessage && <Message type={messageType}>{submitMessage}</Message>}
+					<p>Already have an account? <Link to="/login">Login here</Link></p>
+				</form>
+			</div>
+		</div>
+	);
 }
