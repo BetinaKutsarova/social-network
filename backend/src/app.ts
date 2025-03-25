@@ -14,7 +14,13 @@ import { petRouter } from './core/modules/pets';
 
 const app = new Koa();
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(bodyParser());
 
 app.use(async (ctx, next) => {
