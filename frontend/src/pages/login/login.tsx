@@ -7,7 +7,6 @@ import { loginValidator } from '../../utils/loginValidator';
 import { loginUser } from '../../services/loginUser';
 import { LoginFormData } from '../../interfaces/form';
 import { LoginErrors } from '../../interfaces/error';
-import Cookies from 'js-cookie';
 
 export const Login: React.FC = () => {
     const [submitMessage, setSubmitMessage] = useState<string>("");
@@ -58,11 +57,6 @@ export const Login: React.FC = () => {
                     setMessageType("success");
                     setSubmitMessage("Successfully logged in!");
 
-                    Cookies.set('auth_token', response.token, { 
-                        expires: 1,
-                        secure: import.meta.env.PROD,
-                        sameSite: 'strict'
-                    });
 
                     setTimeout(() => {
                         navigate('/dashboard');

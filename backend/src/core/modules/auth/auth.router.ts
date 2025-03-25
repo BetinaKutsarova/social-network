@@ -2,12 +2,28 @@ import Router from 'koa-router';
 import { validator } from '../../validator';
 import { loginValidationSchema, registerValidationSchema } from './auth.validation-schema';
 import { AuthService } from './auth.service';
+import { authMiddleware } from './auth.middleware';
 
 
 export const authRouter = new Router({
 	prefix: '/auth'
 });
 
+
+authRouter.get(
+	'/verify',
+	authMiddleware,
+	async (ctx) => {
+		ctx.status = 200;
+		ctx.body = {
+			authenticated: true,
+			user: {
+				id: ctx.state.user.id,
+				email: ctx.state.user.email,
+			}
+		};
+	}
+);
 
 authRouter.post(
 	'/register',
@@ -37,12 +53,18 @@ authRouter.post(
 			const { email, password } = ctx.request.body;
 			const result = await AuthService.login(email, password);
 
+			console.log('Setting auth_token cookie');
+
 			ctx.cookies.set('auth_token', result.token, {
 				httpOnly: true,
-				secure: process.env.NODE_ENV === 'production',
-				sameSite: 'strict',
-				maxAge: 24 * 60 * 60 * 1000,  // 1 day
-			});
+				secure: false,
+				sameSite: 'lax',
+				path: '/',
+				domain: 'localhost',
+				maxAge: 24 * 60 * 60 * 1000,
+		});
+
+			console.log('Cookie set. Response headers:', ctx.response.headers);
 
 			ctx.status = 200;
 			ctx.body = { success: true, message: 'Logged in successfully' };

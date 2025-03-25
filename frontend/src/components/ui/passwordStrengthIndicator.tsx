@@ -22,19 +22,19 @@ export const PasswordStrengthIndicator = ({ password }: PasswordStrengthIndicato
     switch (true) {
       case (score <= 2):
         label = 'Weak';
-        color = 'red';
+        color = '#c75f4e';
         break;
       case (score <= 4):
         label = 'Moderate';
-        color = 'orange';
+        color = '#dda15e';
         break;
       case (score <= 5):
         label = 'Strong';
-        color = 'yellowgreen';
+        color = '#b5c08c';
         break;
       default:
         label = 'Very Strong';
-        color = 'green';
+        color = '#8ba673';
     }
 
     return { score, label, color, percent: (score / 6) * 100 };

@@ -3,6 +3,7 @@ import { Login } from './pages/login/login'
 import { Register } from './pages/register/register'
 import { Dashboard } from './pages/dashboard/dashboard'
 import { ProtectedRoute } from './components/other/protectedRoute'
+import { Profile } from './pages/profile/profile'
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          {/* other protected */}
+          <Route path="/profile" element={<Profile/>} />
 
         </Route>
 
