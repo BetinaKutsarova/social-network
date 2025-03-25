@@ -16,6 +16,12 @@ petRouter.get('/', async ctx => {
 	ctx.body = pets;
 });
 
+petRouter.get('/user/:userId', async ctx => {
+  const { userId } = ctx.params;
+  const userPets = await PetService.getByUserId(userId);
+  ctx.body = userPets;
+});
+
 petRouter.get('/:id', async ctx => {
 	const { id } = ctx.params;
 	const pet = await PetService.getById(id);

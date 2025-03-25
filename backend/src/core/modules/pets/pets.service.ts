@@ -13,6 +13,14 @@ export class PetService {
 		return pets;
 	}
 
+	static async getByUserId(userId: string): Promise<PetAttributes[]> {
+		const pets = await Pet.findAll({
+			where: { userId },
+		});
+	
+		return pets;
+	}
+
 	static async getById(id: string): Promise<PetAttributes | null> {
 		const pet = await Pet.findOne({
 			where: { id },
