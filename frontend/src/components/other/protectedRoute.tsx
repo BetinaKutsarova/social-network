@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import { useVerify } from '../../hooks/useVerify';
 
 export const ProtectedRoute = () => {
-    const isAuthenticated = !!Cookies.get('auth_token');
+  const { isAuthenticated, isLoading } = useVerify();
+  
+  if (isLoading) return <div>Loading...</div>;
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
-    }
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
-    return <Outlet />;
+  return <Outlet />;
 };

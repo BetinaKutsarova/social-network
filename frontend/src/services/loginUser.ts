@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { api } from './api';
 
 interface UserData {
     email: string;
@@ -6,22 +6,17 @@ interface UserData {
 }
 
 export const loginUser = async (userData: UserData) => {
-    try {
-        const apiData = {
-            email: userData.email,
-            password: userData.password,
-        };
+	try {
+			const apiData = {
+					email: userData.email,
+					password: userData.password,
+			};
 
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, apiData, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+			const response = await api.post('/auth/login', apiData);
+			return response.data;
 
-        return response.data;
-
-    } catch (error) {
-        console.error('Login error:', error);
-        throw error;
-    }
+	} catch (error) {
+			console.error('Login error:', error);
+			throw error;
+	}
 };
