@@ -7,12 +7,10 @@ import { runSeeder } from './seed';
 
 import { authRouter } from './core/modules/auth';
 import { userRouter } from './core/modules/users';
+import { postRouter } from './core/modules/posts';
+import { commentRouter } from './core/modules/comments';
+import { petRouter } from './core/modules/pets';
 
-console.log('userRouter imported successfully:', !!userRouter);
-
-console.log('Loading app...');
-console.log('Current directory:', __dirname);
-console.log('Importing userRouter from:', './core/modules/users');
 
 const app = new Koa();
 
@@ -42,6 +40,9 @@ rootRouter.get('/', (ctx) => {
 
 rootRouter.use(authRouter.routes());
 rootRouter.use(userRouter.routes());
+rootRouter.use(postRouter.routes());
+rootRouter.use(commentRouter.routes());
+rootRouter.use(petRouter.routes());
 
 app.use(rootRouter.routes());
 app.use(rootRouter.allowedMethods());
