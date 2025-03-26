@@ -1,117 +1,74 @@
 import React from 'react';
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Message } from '../../components/ui/message';
 import { Input } from '../../components/ui/input';
-import { loginValidator } from '../../utils/loginValidator';
 import { loginUser } from '../../services/loginUser';
 import { LoginFormData } from '../../interfaces/form';
-import { LoginErrors } from '../../interfaces/error';
+import { useLoginFormData } from '../../hooks/useLoginFormData';
 
 export const Login: React.FC = () => {
-    const [submitMessage, setSubmitMessage] = useState<string>("");
-    const [messageType, setMessageType] = useState<'error' | 'success'>('error');
-    const navigate = useNavigate();
+	const [submitMessage, setSubmitMessage] = useState<string>("");
+	const [messageType, setMessageType] = useState<'error' | 'success'>('error');
+	const navigate = useNavigate();
 
-    const [loginFormData, setLoginFormData] = useState<LoginFormData>({
-        email: "",
-        password: ""
-    });
+	const { loginFormData, handleChange, resetForm, errors, isLoginFormValid } = useLoginFormData();
 
-    const [errors, setErrors] = useState<LoginErrors>({
-        email: "",
-        password: ""
-    });
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setLoginFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-        const error = loginValidator(name as "email" | "password", value);
-        setErrors(prev => ({
-            ...prev,
-            [name]: error
-        }));
-    }
+		if (!isLoginFormValid()) {
+			setMessageType("error");
+			setSubmitMessage("Please fix the errors in the form.");
+			return;
+		}
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const newErrors = {
-            email: loginValidator("email", loginFormData.email),
-            password: loginValidator("password", loginFormData.password),
-        };
+		const userData: LoginFormData = {
+			email: loginFormData.email,
+			password: loginFormData.password,
+		};
 
-        setErrors(newErrors);
-        const newErrorValues = Object.values(newErrors);
-        if (newErrorValues.every(error => error === "")) {
-            const userData: LoginFormData = {
-                email: loginFormData.email,
-                password: loginFormData.password,
-            };
+		try {
+			await loginUser(userData);
+			navigate('/dashboard');
+			resetForm();
+		} catch (error) {
+			console.error('Login error:', error);
+			setMessageType("error");
+			setSubmitMessage("Incorrect email or password.");
+		}
+	};
 
-            loginUser(userData)
-                .then((response) => {
-                    console.log('Login successful:', response);
-                    setMessageType("success");
-                    setSubmitMessage("Successfully logged in!");
-
-
-                    setTimeout(() => {
-                        navigate('/dashboard');
-                    }, 1500);
-
-                    setLoginFormData({
-                        email: "",
-                        password: "",
-                    });
-                })
-                .catch(error => {
-                    console.error('Login error:', error);
-                    setMessageType("error");
-                    if (error.response && error.response.data && error.response.data.message) {
-                        setSubmitMessage(error.response.data.message);
-                    } else {
-                        setSubmitMessage("Incorrect email or password");
-                    }
-                });
-        } else {
-            setMessageType("error");
-            setSubmitMessage("Please provide a valid email and password");
-        }
-    }
-
-    return (
-        <div className='auth-container'>
-        <div className="form-container">
-            <h1 className="title">Login</h1>
-            <form onSubmit={handleSubmit} className="form">
-                <Input
-                    label="Email"
-                    name="email"
-                    type="email"
-                    id="emailid"
-                    value={loginFormData.email}
-                    onChange={handleChange}
-                    error={errors.email}
-                    required
-                />
-                <Input
-                    label="Password"
-                    name="password"
-                    type="password"
-                    id="passwordid"
-                    value={loginFormData.password}
-                    onChange={handleChange}
-                    error={errors.password}
-                    required
-                />
-                <button type="submit">Login</button>
-                {submitMessage && <Message type={messageType}>{submitMessage}</Message>}
-                <p>Don&apos;t have an account? <Link to="/register">Register here</Link></p>
-            </form>
-        </div>
-        </div>
-    );
+	return (
+		<div className='auth-container'>
+			<div className="form-container">
+				<h1 className="title">Login</h1>
+				<form onSubmit={handleSubmit} className="form">
+					<Input
+						label="Email"
+						name="email"
+						type="email"
+						id="emailid"
+						value={loginFormData.email}
+						onChange={handleChange}
+						error={errors.email}
+						required
+					/>
+					<Input
+						label="Password"
+						name="password"
+						type="password"
+						id="passwordid"
+						value={loginFormData.password}
+						onChange={handleChange}
+						error={errors.password}
+						required
+					/>
+					<button type="submit">Login</button>
+					{submitMessage && <Message type={messageType}>{submitMessage}</Message>}
+					<p>Don&apos;t have an account? <Link to="/register">Register here</Link></p>
+				</form>
+			</div>
+		</div>
+	);
 };
