@@ -1,4 +1,4 @@
-export const registerValidator = (name: string, value: string) => {
+export const  registerValidator = (name: string, value: string) => {
     switch (name) {
         case "username": {
             if (!value) return "Please provide a username"

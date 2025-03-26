@@ -1,96 +1,43 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
+import React, { useState, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '../../components/ui/input';
 import { Message } from '../../components/ui/message';
-import { registerValidator } from '../../utils/registerValidator';
 import { PasswordStrengthIndicator } from '../../components/ui/passwordStrengthIndicator';
 import { registerUser } from '../../services/registerUser';
 import { RegisterFormData } from '../../interfaces/form';
-import { RegisterErrors } from '../../interfaces/error';
+import { useRegisterFormData } from '../../hooks/useRegisterFormData';
 
 export const Register: React.FC = () => {
 	const [submitMessage, setSubmitMessage] = useState<string>("");
 	const [messageType, setMessageType] = useState<'error' | 'success'>('error');
 	const navigate = useNavigate();
 
-	const [registerFormData, setRegisterFormData] = useState<RegisterFormData>({
-		username: "",
-		email: "",
-		password: "",
-		role: "user"
-	});
+	const { registerFormData, handleChange, resetForm, errors, isRegisterFormValid } = useRegisterFormData();
 
-	const [errors, setErrors] = useState<RegisterErrors>({
-		username: "",
-		email: "",
-		password: "",
-	});
-
-	function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>) {
-		const { name, value } = e.target;
-		setRegisterFormData(prev => ({
-			...prev,
-			[name]: value
-		}));
-
-		if (name === 'username' || name === 'email' || name === 'password') {
-			const error = registerValidator(name as 'username' | 'email' | 'password', value);
-			setErrors(prev => ({
-				...prev,
-				[name]: error
-			}));
-		}
-	}
-
-	function handleSubmit(e: FormEvent<HTMLFormElement>) {
+	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
-		const newErrors: RegisterErrors = {
-			username: registerValidator("username", registerFormData.username),
-			email: registerValidator("email", registerFormData.email),
-			password: registerValidator("password", registerFormData.password),
+		if (!isRegisterFormValid()) {
+			setMessageType("error");
+			setSubmitMessage("Please fix the errors in the form.");
+			return;
+		}
+
+		const userData: RegisterFormData = {
+			username: registerFormData.username,
+			email: registerFormData.email,
+			password: registerFormData.password,
+			role: registerFormData.role
 		};
 
-		setErrors(newErrors);
-		const newErrorValues = Object.values(newErrors);
-
-		if (newErrorValues.every(error => error === "")) {
-			const userData: RegisterFormData = {
-				username: registerFormData.username,
-				email: registerFormData.email,
-				password: registerFormData.password,
-				role: registerFormData.role
-			};
-
-			registerUser(userData)
-				.then((response) => {
-					console.log('Registration successful:', response);
-					setMessageType("success");
-					setSubmitMessage("Yay! Successfully registered!");
-
-					setTimeout(() => {
-						navigate('/login');
-					}, 1500);
-
-					setRegisterFormData({
-						username: "",
-						email: "",
-						password: "",
-						role: "user"
-					});
-				})
-				.catch(error => {
-					console.error('Registration error:', error);
-					setMessageType("error");
-					if (error.response && error.response.data && error.response.data.message) {
-						setSubmitMessage(error.response.data.message);
-					} else {
-						setSubmitMessage("Registration failed. Please try again.");
-					}
-				});
-		} else {
+		try {
+			await registerUser(userData);
+			navigate('/login');
+			resetForm();
+		} catch (error) {
+			console.error('Registration error:', error);
 			setMessageType("error");
-			setSubmitMessage("Oh no! You have a boo boo:(");
+			setSubmitMessage("Error in registration.");
 		}
 	}
 
@@ -162,4 +109,4 @@ export const Register: React.FC = () => {
 			</div>
 		</div>
 	);
-}
+};
