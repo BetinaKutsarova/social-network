@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './navbar.css';
 import { useLogout } from '../../hooks/useLogout';
 import { FaHome, FaEnvelope, FaSearch, FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import { NavItem } from './navitem';
