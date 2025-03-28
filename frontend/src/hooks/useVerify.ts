@@ -1,22 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { useState, useEffect, useCallback } from 'react';
+import { userAtom } from '../state/atoms';
 import { api } from '../services/api';
 
 export const useVerify = () => {
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useAtom(userAtom);
+  const [isLoading, setIsLoading] = useState(true);
 
+	const verifyAuth = useCallback(async (): Promise<void> => {
+		if (user) {
+			setIsLoading(false);
+			return;
+		}
+		setIsLoading(true);
+		try {
+			const response = await api.get('/auth/verify');
+			setUser(response.data.user);
+		} catch (error) {
+			console.error('Authentication error:', error);
+			setUser(null);
+		} finally {
+			setIsLoading(false);
+		}
+	}, [setUser, user]);
+	
 	useEffect(() => {
-		api.get('/auth/verify')
-			.then(() => {
-				setIsAuthenticated(true);
-				setIsLoading(false);
-			})
-			.catch((error) => {
-				console.error('Authentication error:', error);
-				setIsAuthenticated(false);
-				setIsLoading(false);
-			});
-	}, []);
+		verifyAuth();
+	}, [verifyAuth]);
 
-	return { isAuthenticated, isLoading };
+  return { 
+    user, 
+    isAuthenticated: !!user,
+    isLoading,
+    verifyAuth
+  };
 };
