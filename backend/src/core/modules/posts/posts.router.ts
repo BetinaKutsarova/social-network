@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import { validator } from '../../validator';
-import { authMiddleware } from '../auth';
+// import { authMiddleware } from '../auth';
 import { PostService } from './posts.service';
 import { createPostValidationSchema, updatePostValidationSchema } from './posts.validation-schema';
 
@@ -9,11 +9,25 @@ export const postRouter = new Router({
 	prefix: '/post'
 });
 
-postRouter.use(authMiddleware);
+// postRouter.use(authMiddleware);
 
 postRouter.get('/', async ctx => {
 	const posts = await PostService.getAll();
 	ctx.body = posts;
+});
+
+// get all posts of logged-in user
+postRouter.get('/:userId', async ctx => {
+  const { userId } = ctx.params;
+  
+  if (!userId) {
+    ctx.status = 400;
+    ctx.body = { error: 'User ID is required' };
+    return;
+  }
+  
+  const posts = await PostService.getByUserId(userId);
+  ctx.body = posts;
 });
 
 postRouter.get('/:id', async ctx => {

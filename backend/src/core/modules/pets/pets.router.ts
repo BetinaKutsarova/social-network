@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import { validator } from '../../validator';
-import { authMiddleware } from '../auth';
+// import { authMiddleware } from '../auth';
 import { PetService } from './pets.service';
 import { createPetValidationSchema, updatePetValidationSchema } from './pets.validation-schema';
 
@@ -9,7 +9,7 @@ export const petRouter = new Router({
 	prefix: '/pet'
 });
 
-petRouter.use(authMiddleware);
+// petRouter.use(authMiddleware);
 
 petRouter.get('/', async ctx => {
 	const pets = await PetService.getAll();

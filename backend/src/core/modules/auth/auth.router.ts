@@ -19,7 +19,9 @@ authRouter.get(
 			authenticated: true,
 			user: {
 				id: ctx.state.user.id,
+				username: ctx.state.user.username,
 				email: ctx.state.user.email,
+				role: ctx.state.user.role
 			}
 		};
 	}

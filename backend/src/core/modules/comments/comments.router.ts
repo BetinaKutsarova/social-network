@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import { validator } from '../../validator';
-import { authMiddleware } from '../auth';
+// import { authMiddleware } from '../auth';
 import { CommentService } from './comments.service';
 import { createCommentValidationSchema, updateCommentValidationSchema } from './comments.validation-schema';
 
@@ -8,7 +8,7 @@ export const commentRouter = new Router({
   prefix: '/post/:postId/comment'
 });
 
-commentRouter.use(authMiddleware);
+// commentRouter.use(authMiddleware);
 
 commentRouter.get('/', async ctx => {
   const { postId } = ctx.params;
