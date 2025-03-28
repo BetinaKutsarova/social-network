@@ -8,9 +8,9 @@ export const FeedItem: React.FC<FeedItemProps> = ({ item }) => {
 				<div className="feed-item-user-info">
 					<div className="feed-item-meta">
 						{/* <h4 className="feed-item-author">{item.userId}</h4> */}
-						<span className="feed-item-username">{item.username}</span>
+						<span className="feed-item-username">{item.author.username}</span>
 						<span className="feed-item-time">·</span>
-						<span className="feed-item-time">{item.time}</span>
+						<span className="feed-item-time">{item.createdAt}</span>
 					</div>
 					<p className="feed-item-content">{item.content}</p>
 					<div className="feed-item-actions">

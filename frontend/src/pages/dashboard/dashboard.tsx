@@ -5,10 +5,14 @@ import { NavBar } from '../../components/ui/navbar';
 import type { TrendingTopic, SuggestionUser } from '../../interfaces/dashboard'
 import { useAtom } from 'jotai';
 import { userAtom } from '../../state/atoms';
+import { useAllPosts } from '../../hooks/useAllPosts';
+import { FeedItem } from '../../components/ui/feedItem';
 
 
 export const Dashboard: React.FC = () => {
 	const [user] = useAtom(userAtom);
+
+	const { allPosts, isLoading, error } = useAllPosts();
 
 	// Sample trending topics
 	const trendingTopics: TrendingTopic[] = [
@@ -59,11 +63,19 @@ export const Dashboard: React.FC = () => {
 							</div>
 						</div>
 
-						{/* <div className="feed-items">
-							{feedItems.map(item => (
-								<FeedItem key={item.id} item={item} />
-							))}
-						</div> */}
+						<div className="feed-items">
+							{isLoading ? (
+								<p>Loading posts...</p>
+							) : error ? (
+								<p className="error-message">{error}</p>
+							) : allPosts.length > 0 ? (
+								allPosts.map(post => (
+									<FeedItem key={post.id} item={post} />
+								))
+							) : (
+								<p>No posts to show.</p>
+							)}
+						</div>
 					</div>
 
 					<div className="right-sidebar">

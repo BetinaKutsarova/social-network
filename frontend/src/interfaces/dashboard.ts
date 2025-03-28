@@ -10,8 +10,15 @@ export interface UserData {
 	posts: PostData[];
 }
 
+export interface AuthorType {
+  id: number;
+  username: string;
+  email: string;
+}
+
 export interface FeedItemType {
 	id: number;
+	author: AuthorType; 
 	username: string;
 	content: string;
 	time: string;
@@ -19,6 +26,7 @@ export interface FeedItemType {
 	comments: number;
 	shares: number;
 	image?: string;
+	createdAt: string;
 }
 
 export interface TrendingTopic {
