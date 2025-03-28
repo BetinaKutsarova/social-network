@@ -1,13 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './navbar.css';
 import { useLogout } from '../../hooks/useLogout';
 import { FaHome, FaEnvelope, FaSearch, FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import { NavItem } from './navitem';
 import { IoPaw } from 'react-icons/io5';
+import { activeTabAtom } from '../../state/atoms';
+import { useAtom } from 'jotai';
 
 export const NavBar: React.FC = () => {
-	const [activeTab, setActiveTab] = useState<string>('home');
+	const [activeTab, setActiveTab] = useAtom(activeTabAtom)
+	console.log(activeTab);
 	const { logout } = useLogout();
+	const navigate = useNavigate();
 
 	return (
 		<div className="sidebar">
@@ -19,9 +24,12 @@ export const NavBar: React.FC = () => {
 			<nav className="nav-container">
 				<NavItem
 					icon={<FaHome size={20} />}
-					label="Home"
-					isActive={activeTab === 'home'}
-					onClick={() => setActiveTab('home')}
+					label="Dashboard"
+					isActive={activeTab === 'dashboard'}
+					onClick={() => {
+						setActiveTab('dashboard');
+						navigate('/dashboard');
+					}}
 				/>
 				<NavItem
 					icon={<FaSearch size={20} />}
@@ -39,7 +47,10 @@ export const NavBar: React.FC = () => {
 					icon={<FaUser size={20} />}
 					label="Profile"
 					isActive={activeTab === 'profile'}
-					onClick={() => setActiveTab('profile')}
+					onClick={() => {
+						setActiveTab('profile');
+						navigate('/profile');
+					}}
 				/>
 				<NavItem
 					icon={<FaCog size={20} />}
