@@ -26,6 +26,22 @@ export class PostService {
 		return post;
 	}
 
+	static async getByUserId(userId: string): Promise<PostAttributes[]> {
+		const posts = await Post.findAll({
+			where: {
+				userId: userId
+			},
+			include: [{
+				model: User,
+				as: 'author',
+				attributes: ['id', 'username', 'email']
+			}],
+			order: [['createdAt', 'DESC']]
+		});
+
+		return posts;
+	}
+
 	static async create(postData: PostCreationAttributes): Promise<PostCreationAttributes> {
 		const post = await Post.create(postData);
 		return post;
