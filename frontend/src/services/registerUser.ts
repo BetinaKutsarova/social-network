@@ -1,18 +1,7 @@
-import axios from 'axios';
+import { api } from './api';
 import { RegisterFormData } from '../interfaces/form';
 
 export const registerUser = async (userData: RegisterFormData) => {
-	try {
-		const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, userData, {
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-
+		const response = await api.post('/auth/register', userData);
 		return response.data;
-
-	} catch (error) {
-		console.error('Registration error:', error);
-		throw error;
-	}
 };

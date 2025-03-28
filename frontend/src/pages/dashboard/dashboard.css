@@ -3,112 +3,6 @@
   min-height: 100vh;
 }
 
-.sidebar {
-  width: 250px;
-  background-color: var(--color-form-bg);
-  border-right: 1px solid var(--color-border);
-  padding: 20px 0;
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  box-shadow: 2px 0 10px var(--color-shadow);
-}
-
-.logo-container {
-  padding: 0 20px 20px;
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: 20px;
-	text-align: center;
-}
-
-.logo {
-  color: var(--color-title);
-  margin: 0;
-  font-size: 28px;
-  font-weight: 600;
-  display: block;
-}
-
-.logo-small {
-  display: none;
-  color: var(--color-title);
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.nav-container {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 0 10px;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 15px;
-  border-radius: 10px;
-  background: transparent;
-  border: none;
-  color: var(--color-text-dark);
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-  width: 100%;
-}
-
-.nav-item:hover {
-  background-color: rgba(184, 147, 95, 0.1);
-}
-
-.nav-item.active {
-  background-color: rgba(184, 147, 95, 0.2);
-  color: var(--color-button);
-  font-weight: 600;
-}
-
-.nav-label {
-  font-family: 'Quicksand', 'Open Sans', sans-serif;
-}
-
-.logout-container {
-  padding: 15px 20px;
-  border-top: 1px solid var(--color-border);
-  margin-top: auto;
-}
-
-.logout-button {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 15px;
-  border-radius: 10px;
-  background: transparent;
-  border: 1px solid var(--color-button);
-  color: var(--color-button);
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-}
-
-.logout-button:hover {
-  background-color: var(--color-button);
-  color: white;
-}
-
-.logout-text {
-  font-family: 'Quicksand', 'Open Sans', sans-serif;
-}
-
 .main-content {
   flex-grow: 1;
   display: flex;
@@ -306,7 +200,7 @@
   margin-bottom: 15px;
 }
 
-.profile-name {
+.profile-email {
   margin: 0 0 2px;
   font-size: 18px;
   font-weight: 600;

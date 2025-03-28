@@ -6,7 +6,6 @@ import { config } from '../../../config';
 import { redisClient } from '../redis/redis.service';
 
 export interface TokenResponse {
-	id: string;
 	token: string;
 }
 
@@ -53,7 +52,6 @@ export class AuthService {
 		console.log(token);
 
 		return {
-			id: user.id,
 			token: token
 		};
 	}

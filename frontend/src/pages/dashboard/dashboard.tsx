@@ -1,63 +1,18 @@
-// import React, { useState } from 'react';
+import React from 'react';
 import './dashboard.css';
 import { NavBar } from '../../components/ui/navbar';
+// import { FeedItem } from '../../components/ui/feedItem';
+import type { TrendingTopic, SuggestionUser } from '../../interfaces/dashboard'
+import { useAtom } from 'jotai';
+import { userAtom } from '../../state/atoms';
+import { useAllPosts } from '../../hooks/useAllPosts';
 import { FeedItem } from '../../components/ui/feedItem';
-
-import type {
-	UserData,
-	FeedItemType,
-	TrendingTopic,
-	SuggestionUser
-} from '../../interfaces/dashboard'
 
 
 export const Dashboard: React.FC = () => {
-	// Sample user data
-	const userData: UserData = {
-		name: 'Betty',
-		username: '@betty',
-		avatar: '/api/placeholder/80/80',
-		followers: 15,
-		following: 27,
-		posts: 342
-	};
+	const [user] = useAtom(userAtom);
 
-	// Sample feed data
-	const feedItems: FeedItemType[] = [
-		{
-			id: 1,
-			author: 'stickyPaws',
-			username: '@stickypaws',
-			avatar: '/api/placeholder/50/50',
-			content: 'Just found the best treats for my dogs! Link is in my profile!',
-			time: '2h ago',
-			likes: 124,
-			comments: 43,
-			shares: 12
-		},
-		{
-			id: 2,
-			author: 'Matt',
-			username: '@matt',
-			avatar: '/api/placeholder/50/50',
-			content: 'Beautiful day for hiking with my good boys! #NatureLovers #Weekend',
-			time: '4h ago',
-			likes: 287,
-			comments: 32,
-			shares: 8
-		},
-		{
-			id: 3,
-			author: 'LillyMeow',
-			username: '@lillymeow',
-			avatar: '/api/placeholder/50/50',
-			content: 'My cat is throwing up all of the new grass I gave her! What should I do???',
-			time: '5h ago',
-			likes: 532,
-			comments: 97,
-			shares: 215
-		}
-	];
+	const { allPosts, isLoading, error } = useAllPosts();
 
 	// Sample trending topics
 	const trendingTopics: TrendingTopic[] = [
@@ -82,7 +37,7 @@ export const Dashboard: React.FC = () => {
 					<div className="feed">
 						<div className="post-creator">
 							<div className="post-input-container">
-								<img src={userData.avatar} alt="Your avatar" className="avatar" width="40" height="40" />
+								{/* <img src={""} alt="Your avatar" className="avatar" width="40" height="40" /> */}
 								<div className="post-input-wrapper">
 									<textarea
 										className="post-textarea"
@@ -109,32 +64,40 @@ export const Dashboard: React.FC = () => {
 						</div>
 
 						<div className="feed-items">
-							{feedItems.map(item => (
-								<FeedItem key={item.id} item={item} />
-							))}
+							{isLoading ? (
+								<p>Loading posts...</p>
+							) : error ? (
+								<p className="error-message">{error}</p>
+							) : allPosts.length > 0 ? (
+								allPosts.map(post => (
+									<FeedItem key={post.id} item={post} />
+								))
+							) : (
+								<p>No posts to show.</p>
+							)}
 						</div>
 					</div>
 
 					<div className="right-sidebar">
 						<div className="profile-card">
 							<div className="profile-header">
-								<img src={userData.avatar} alt="Profile" className="avatar" width="64" height="64" />
+								{/* <img src={""} alt="Profile" className="avatar" width="64" height="64" /> */}
 								<div>
-									<h3 className="profile-name">{userData.name}</h3>
-									<p className="profile-username">{userData.username}</p>
+									<h3 className="profile-username">{user?.username}</h3>
+									<p className="profile-email">{user?.email}</p>
 								</div>
 							</div>
 							<div className="profile-stats">
 								<div className="profile-stat">
-									<p className="profile-stat-value">{userData.posts}</p>
+									{/* <p className="profile-stat-value">{userData?.posts}</p> */}
 									<p className="profile-stat-label">Posts</p>
 								</div>
 								<div className="profile-stat">
-									<p className="profile-stat-value">{userData.followers}</p>
+									{/* <p className="profile-stat-value">{user?.followers}</p> */}
 									<p className="profile-stat-label">Followers</p>
 								</div>
 								<div className="profile-stat">
-									<p className="profile-stat-value">{userData.following}</p>
+									{/* <p className="profile-stat-value">{user?.following}</p> */}
 									<p className="profile-stat-label">Following</p>
 								</div>
 							</div>

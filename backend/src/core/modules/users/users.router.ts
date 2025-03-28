@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import { validator } from '../../validator';
-import { authMiddleware } from '../auth';
+// import { authMiddleware } from '../auth';
 import { createUserValidationSchema, updateUserValidationSchema } from './users.validation-schema';
 import { UserService } from './users.service';
 
@@ -8,7 +8,7 @@ export const userRouter = new Router({
 	prefix: '/users'
 });
 
-userRouter.use(authMiddleware);
+// userRouter.use(authMiddleware);
 
 userRouter.get('/', async ctx => {
 	if (ctx.state.user.role !== 'admin') {

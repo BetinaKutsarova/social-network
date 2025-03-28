@@ -1,4 +1,4 @@
-export interface UserData {
+export interface UserWithPetsData {
   name: string;
   username: string;
   bio: string;
@@ -10,15 +10,18 @@ export interface UserData {
   followers: number;
   following: number;
   posts: number;
+	pets: PetData[]; 
 }
 
 export interface PetData {
-  id: number;
-  name: string;
-  type: string;
-  breed: string;
-  age: string;
-  photo: string;
+	id: string;
+	userId: string;
+	name: string;
+	species: string;
+	breed?: string;
+	ageYears?: number;
+	bio?: string;
+	avatarUrl?: string;
 }
 
 export interface PostData {

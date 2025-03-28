@@ -5,7 +5,7 @@ import Router from 'koa-router';
 import { initDatabase } from './core/db';
 import { runSeeder } from './seed';
 
-import { authRouter } from './core/modules/auth';
+import { authMiddleware, authRouter } from './core/modules/auth';
 import { userRouter } from './core/modules/users';
 import { postRouter } from './core/modules/posts';
 import { commentRouter } from './core/modules/comments';
@@ -35,6 +35,20 @@ app.use(async (ctx, next) => {
       }
     };
     ctx.app.emit('error', err, ctx);
+  }
+});
+
+app.use(async (ctx, next) => {
+  const publicPaths = [
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/logout',
+  ];
+  
+  if (publicPaths.includes(ctx.path)) {
+    await next();
+  } else {
+    await authMiddleware(ctx, next);
   }
 });
 
