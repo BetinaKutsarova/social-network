@@ -1,8 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { useLoginFormData } from "./useLoginFormData";
 import { loginValidator } from "../utils/loginValidator";
-import { jest } from '@jest/globals';
-// import { describe, expect, test, jest, beforeEach } from "@jest/globals";
+import { describe, expect, test, jest, beforeEach } from "@jest/globals";
 
 jest.mock("../utils/loginValidator", () => ({
   loginValidator: jest.fn(),
