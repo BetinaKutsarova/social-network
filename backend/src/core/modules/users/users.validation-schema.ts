@@ -7,7 +7,8 @@ export const createUserValidationSchema:yup.ObjectSchema<UserCreationAttributes>
   password: yup.string()
     .min(8, 'Password must be at least 5 characters')
     .required('Password is required'),
-  role: yup.string().oneOf(['admin', 'user', 'trainer'], 'Invalid role').default('user')
+  role: yup.string().oneOf(['admin', 'user', 'trainer'], 'Invalid role').default('user'),
+	avatarUrl: yup.string().optional()
 });
 
 export const updateUserValidationSchema:yup.ObjectSchema<UserUpdateAttributes> = yup.object({
@@ -15,6 +16,7 @@ export const updateUserValidationSchema:yup.ObjectSchema<UserUpdateAttributes> =
   email: yup.string().email('Invalid email format').optional(),
   password: yup.string().min(8, 'Password must be at least 5 characters').optional(),
   role: yup.string().oneOf(['admin', 'user', 'trainer'], 'Invalid role').optional(),
+	avatarUrl: yup.string().optional()
 }).test(
   'at-least-one-field',
   'At least one field must be provided',

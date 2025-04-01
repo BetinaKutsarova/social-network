@@ -1,47 +1,78 @@
-import { Post, User } from '../../../models';
-import { PostAttributes, PostCreationAttributes, PostUpdateAttributes } from '../../../models/Post';
+import { Post, User } from "../../../models";
+import {
+  PostAttributes,
+  PostCreationAttributes,
+  PostUpdateAttributes,
+} from "../../../models/Post";
 
 export class PostService {
-	static async getAll(): Promise<PostAttributes[]> {
-		const posts = await Post.findAll({
-			include: [{
-				model: User,
-				as: 'author',
-				attributes: ['id', 'username', 'email']
-			}]
-		});
-		return posts;
-	}
+  static async getAll(): Promise<PostAttributes[]> {
+    const posts = await Post.findAll({
+      include: [
+        {
+          model: User,
+          as: "author",
+          attributes: ["id", "username", "email"],
+        },
+      ],
+    });
+    return posts;
+  }
 
-	static async getById(id: string): Promise<PostAttributes | null> {
-		const post = await Post.findOne({
-			where: { id },
-			include: [{
-				model: User,
-				as: 'author',
-				attributes: ['id', 'username', 'email']
-			}]
-		});
+  static async getById(id: string): Promise<PostAttributes | null> {
+    const post = await Post.findOne({
+      where: { id },
+      include: [
+        {
+          model: User,
+          as: "author",
+          attributes: ["id", "username", "email"],
+        },
+      ],
+    });
 
-		return post;
-	}
+    return post;
+  }
 
-	static async create(postData: PostCreationAttributes): Promise<PostCreationAttributes> {
-		const post = await Post.create(postData);
-		return post;
-	}
+  static async getByUserId(userId: string): Promise<PostAttributes[]> {
+    const posts = await Post.findAll({
+      where: {
+        userId: userId,
+      },
+      include: [
+        {
+          model: User,
+          as: "author",
+          attributes: ["id", "username", "email"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
 
-	static async update(id: string, postData: Partial<PostUpdateAttributes>): Promise<PostAttributes | null> {
-		const post = await Post.findByPk(id);
-		if (!post) return null;
+    return posts;
+  }
 
-		await post.update(postData);
+  static async create(
+    postData: PostCreationAttributes
+  ): Promise<PostCreationAttributes> {
+    const post = await Post.create(postData);
+    return post;
+  }
 
-		return this.getById(id);
-	}
+  static async update(
+    id: string,
+    postData: Partial<PostUpdateAttributes>
+  ): Promise<PostAttributes | null> {
+    const post = await Post.findByPk(id);
+    if (!post) return null;
 
-	static async delete(id: string): Promise<boolean> {
-		const deletedCount = await Post.destroy({ where: { id } });
-		return deletedCount > 0;
-	}
+    await post.update(postData);
+
+    return this.getById(id);
+  }
+
+  static async delete(id: string): Promise<boolean> {
+    const deletedCount = await Post.destroy({ where: { id } });
+    return deletedCount > 0;
+  }
 }
