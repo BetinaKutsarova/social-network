@@ -1,101 +1,120 @@
-import Router from 'koa-router';
-import { validator } from '../../validator';
+import Router from "koa-router";
+import { validator } from "../../validator";
 // import { authMiddleware } from '../auth';
-import { PostService } from './posts.service';
-import { createPostValidationSchema, updatePostValidationSchema } from './posts.validation-schema';
-
+import { PostService } from "./posts.service";
+import {
+  createPostValidationSchema,
+  updatePostValidationSchema,
+} from "./posts.validation-schema";
 
 export const postRouter = new Router({
-	prefix: '/post'
+  prefix: "/post",
 });
 
 // postRouter.use(authMiddleware);
 
-postRouter.get('/', async ctx => {
-	const posts = await PostService.getAll();
-	ctx.body = posts;
+postRouter.get("/", async (ctx) => {
+	const page = parseInt(String(ctx.query.page ?? "1"));
+  const limit = parseInt(String(ctx.query.limit ?? "10"));
+
+  const { posts, total } = await PostService.getAll(page, limit);
+  ctx.body = { posts, total };
 });
 
 // get all posts of logged-in user
-postRouter.get('/:userId', async ctx => {
+postRouter.get("/:userId", async (ctx) => {
   const { userId } = ctx.params;
-  
+	const page = parseInt(String(ctx.query.page ?? "1"));
+  const limit = parseInt(String(ctx.query.limit ?? "10"));
+
   if (!userId) {
     ctx.status = 400;
-    ctx.body = { error: 'User ID is required' };
+    ctx.body = { error: "User ID is required" };
     return;
   }
-  
-  const posts = await PostService.getByUserId(userId);
-  ctx.body = posts;
+
+  try {
+    const { posts, total } = await PostService.getByUserId(userId, page, limit);
+    ctx.body = { posts, total };
+  } catch (error) {
+    ctx.status = 500;
+    ctx.body = { error: "Failed to fetch posts" };
+  }
 });
 
-postRouter.get('/:id', async ctx => {
-	const { id } = ctx.params;
-	const post = await PostService.getById(id);
-	if (!post) {
-		ctx.status = 404;
-		ctx.body = { error: { message: 'Post not found' } };
-		return;
-	}
+postRouter.get("/:id", async (ctx) => {
+  const { id } = ctx.params;
+  const post = await PostService.getById(id);
+  if (!post) {
+    ctx.status = 404;
+    ctx.body = { error: { message: "Post not found" } };
+    return;
+  }
 
-	ctx.body = post;
+  ctx.body = post;
 });
 
-postRouter.post('/', validator(createPostValidationSchema), async ctx => {
-	const postData = {
-		...ctx.request.body,
-		userId: ctx.state.user.id
-	};
-	try {
-		const post = await PostService.create(postData);
-		ctx.status = 201;
-		ctx.body = post;
-
-	} catch (error: unknown) {
-		ctx.status = 400;
-		ctx.body = { error: { message: error instanceof Error ? error.message : 'Unknown error' } };
-	}
+postRouter.post("/", validator(createPostValidationSchema), async (ctx) => {
+  const postData = {
+    ...ctx.request.body,
+    userId: ctx.state.user.id,
+  };
+  try {
+    const post = await PostService.create(postData);
+    ctx.status = 201;
+    ctx.body = post;
+  } catch (error: unknown) {
+    ctx.status = 400;
+    ctx.body = {
+      error: {
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+    };
+  }
 });
 
-postRouter.put('/:id', validator(updatePostValidationSchema), async ctx => {
-	const { id } = ctx.params;
+postRouter.put("/:id", validator(updatePostValidationSchema), async (ctx) => {
+  const { id } = ctx.params;
 
-	const post = await PostService.getById(id);
-	if (!post) {
-		ctx.status = 404;
-		ctx.body = { error: { message: 'Post not found' } };
-		return;
-	}
+  const post = await PostService.getById(id);
+  if (!post) {
+    ctx.status = 404;
+    ctx.body = { error: { message: "Post not found" } };
+    return;
+  }
 
-	if (post.userId !== ctx.state.user.id) {
-		ctx.status = 403;
-		ctx.body = { error: { message: 'Access denied - you can only update your own posts' } };
-		return;
-	}
+  if (post.userId !== ctx.state.user.id) {
+    ctx.status = 403;
+    ctx.body = {
+      error: { message: "Access denied - you can only update your own posts" },
+    };
+    return;
+  }
 
-	const postData = ctx.request.body;
+  const postData = ctx.request.body;
 
-	const updatedPost = await PostService.update(id, postData);
-	ctx.body = updatedPost;
+  const updatedPost = await PostService.update(id, postData);
+  ctx.body = updatedPost;
 });
 
-postRouter.delete('/:id', async ctx => {
-	const { id } = ctx.params;
+postRouter.delete("/:id", async (ctx) => {
+  const { id } = ctx.params;
 
-	const post = await PostService.getById(id);
-	if (!post) {
-		ctx.status = 404;
-		ctx.body = { error: { message: 'Post not found' } };
-		return;
-	}
+  const post = await PostService.getById(id);
+  if (!post) {
+    ctx.status = 404;
+    ctx.body = { error: { message: "Post not found" } };
+    return;
+  }
 
-	if (post.userId !== ctx.state.user.id && ctx.state.user.role !== 'admin') {
-		ctx.status = 403;
-		ctx.body = { error: { message: 'Access denied - you can only delete your own posts' } };
-		return;
-	}
+  if (post.userId !== ctx.state.user.id && ctx.state.user.role !== "admin") {
+    ctx.status = 403;
+    ctx.body = {
+      error: { message: "Access denied - you can only delete your own posts" },
+    };
+    return;
+  }
 
-	await PostService.delete(id);
-	ctx.status = 204;
+  await PostService.delete(id);
+  ctx.status = 204;
 });
