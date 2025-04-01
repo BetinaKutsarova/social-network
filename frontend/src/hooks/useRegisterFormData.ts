@@ -28,9 +28,9 @@ export const useRegisterFormData = () => {
 	}, []);
 
 	const isRegisterFormValid = useCallback(() => {
-		const usernameError = registerFormData.username ? registerValidator("username", registerFormData.username) : "";
-		const emailError = registerFormData.email ? registerValidator("email", registerFormData.email) : "";
-		const passwordError = registerFormData.password ? registerValidator("password", registerFormData.password) : "";
+		const usernameError = registerValidator("username", registerFormData.username);
+		const emailError = registerValidator("email", registerFormData.email);
+		const passwordError = registerValidator("password", registerFormData.password);
 
 		const newErrors = {
 			username: usernameError,

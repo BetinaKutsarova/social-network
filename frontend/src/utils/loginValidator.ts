@@ -8,7 +8,7 @@ export const loginValidator = (name: string, value: string) => {
         }
         case "password": {
             if (!value) return "Please enter your password"
-            const specialChars = /[!@#$%^&*(),.?":{}|<>]/; // do i need this here?
+            const specialChars = /[!@#$%^&*(),.?":{}|<>]/;
             if (!specialChars.test(value) || (value.length < 5)) return "Invalid password";
             return "";
         }
