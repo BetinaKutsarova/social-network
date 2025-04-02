@@ -1,22 +1,23 @@
-import React, {useState} from 'react';
-import './profile.css';
-import { FaEdit, FaCamera } from 'react-icons/fa';
-import { NavBar } from '../../components/ui/navbar';
-import { useAtom } from 'jotai';
-import { activeSectionAtom, userAtom } from '../../state/atoms';
-import { FeedItem } from '../../components/ui/feedItem';
-import { useUserPosts } from '../../hooks/useUserPosts';
+import React, {useState} from "react";
+import "./profile.css";
+import { FaEdit, FaCamera } from "react-icons/fa";
+import { NavBar } from "../../components/ui/navbar";
+import { useAtom } from "jotai";
+import { activeSectionAtom, userAtom } from "../../state/atoms";
+import { FeedItem } from "../../components/ui/feedItem";
+import { useUserPosts } from "../../hooks/useUserPosts";
+import { Pagination } from "../../components/ui/pagination";
 import { UpdateUserProfileModal } from '../../components/ui/updateUserProfileModal';
 import { UpdateUserData } from '../../interfaces/form';
 // import { FeedItemType } from '../../interfaces/dashboard';
-
 
 export const Profile: React.FC = () => {
 	const [activeSection, setActiveSection] = useAtom(activeSectionAtom);
 	const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 	const [user, setUser] = useAtom(userAtom);
 
-	const { userPosts, isLoading, error } = useUserPosts();
+  const { userPosts, isLoading, error, pagination, handlePageChange } =
+    useUserPosts();
 
 	const handleProfileUpdate = (updatedUser: UpdateUserData) => {
 		if (user) {
@@ -31,15 +32,15 @@ export const Profile: React.FC = () => {
 		<div className="dashboard-container">
 			<NavBar />
 
-			<div className="main-content">
-				<div className="profile-container">
-					<div className="profile-header-container">
-						<div className="profile-cover-photo">
-							PHOTO
-							<button className="edit-cover-photo">
-								<FaCamera size={16} />
-							</button>
-						</div>
+      <div className="main-content">
+        <div className="profile-container">
+          <div className="profile-header-container">
+            <div className="profile-cover-photo">
+              PHOTO
+              <button className="edit-cover-photo">
+                <FaCamera size={16} />
+              </button>
+            </div>
 
 						<div className="profile-header-info">
 						<div className="profile-avatar-container">
@@ -63,66 +64,85 @@ export const Profile: React.FC = () => {
 							</div>
 						</div>
 
-						<div className="profile-user-info">
-							<p className="profile-username">{user?.username}</p>
-							<p className="profile-email">{user?.email}</p>
+            <div className="profile-user-info">
+              <p className="profile-username">{user?.username}</p>
+              <p className="profile-email">{user?.email}</p>
 
-							<div className="profile-details">
-							</div>
-						</div>
-					</div>
+              <div className="profile-details"></div>
+            </div>
+          </div>
 
-					<div className="profile-content">
-						<div className="profile-tabs">
-							<button
-								className={`profile-tab ${activeSection === 'posts' ? 'active' : ''}`}
-								onClick={() => setActiveSection('posts')}
-							>
-								Posts
-							</button>
-							<button
-								className={`profile-tab ${activeSection === 'pets' ? 'active' : ''}`}
-								onClick={() => setActiveSection('pets')}
-							>
-								My Pets
-							</button>
-							<button
-								className={`profile-tab ${activeSection === 'media' ? 'active' : ''}`}
-								onClick={() => setActiveSection('media')}
-							>
-								Media
-							</button>
-							<button
-								className={`profile-tab ${activeSection === 'liked' ? 'active' : ''}`}
-								onClick={() => setActiveSection('liked')}
-							>
-								Liked
-							</button>
-						</div>
+          <div className="profile-content">
+            <div className="profile-tabs">
+              <button
+                className={`profile-tab ${
+                  activeSection === "posts" ? "active" : ""
+                }`}
+                onClick={() => setActiveSection("posts")}
+              >
+                Posts
+              </button>
+              <button
+                className={`profile-tab ${
+                  activeSection === "pets" ? "active" : ""
+                }`}
+                onClick={() => setActiveSection("pets")}
+              >
+                My Pets
+              </button>
+              <button
+                className={`profile-tab ${
+                  activeSection === "media" ? "active" : ""
+                }`}
+                onClick={() => setActiveSection("media")}
+              >
+                Media
+              </button>
+              <button
+                className={`profile-tab ${
+                  activeSection === "liked" ? "active" : ""
+                }`}
+                onClick={() => setActiveSection("liked")}
+              >
+                Liked
+              </button>
+            </div>
 
-						{activeSection === 'posts' && (
-							<div className="feed-items">
-								{isLoading ? (
-									<p>Loading posts...</p>
-								) : error ? (
-									<p className="error-message">{error}</p>
-								) : userPosts.length > 0 ? (
-									userPosts.map(post => (
-										<FeedItem key={post.id} item={post} />
-									))
-								) : (
-									<p>No posts to show.</p>
-								)}
-							</div>
-						)}
+            {activeSection === "posts" && (
+              <div className="feed-items">
+                {isLoading && userPosts.length === 0 ? (
+                  <p>Loading posts...</p>
+                ) : error ? (
+                  <p className="error-message">{error}</p>
+                ) : userPosts.length > 0 ? (
+                  <>
+                    {userPosts.map((post) => (
+                      <FeedItem key={post.id} item={post} />
+                    ))}
 
-						{activeSection === 'pets' && (
-							<div className="profile-pets">
-								<div className="add-pet-container">
-									<button className="add-pet-button">+ Add a new pet</button>
-								</div>
+                    {userPosts.length > 0 && (
+                      <Pagination
+                        currentPage={pagination.page}
+                        onPageChange={handlePageChange}
+                        hasNextPage={pagination.hasMore}
+                      />
+                    )}
 
-								{/* <div className="pets-grid">
+                    {isLoading && <p className="loading-message">Loading...</p>}
+                  </>
+                ) : (
+                  <p>No posts to show.</p>
+                )}
+              </div>
+            )}
+
+            {activeSection === "pets" && (
+              <div className="profile-pets">
+                <div className="add-pet-container">
+                  <button className="add-pet-button">+ Add a new pet</button>
+                </div>
+
+                {/* <div className="pets-grid">
 								{userData?.pets.map(pet => (
 									<div key={pet.id} className="pet-card">
 										<div className="pet-image-container">
@@ -137,20 +157,20 @@ export const Profile: React.FC = () => {
 									</div>
 								))}
 							</div> */}
-							</div>
-						)}
+              </div>
+            )}
 
-						{activeSection === 'media' && (
-							<div className="profile-media">
-								<div className="media-grid">
-									{/* {postData.filter(post => post.image).map(post => (
+            {activeSection === "media" && (
+              <div className="profile-media">
+                <div className="media-grid">
+                  {/* {postData.filter(post => post.image).map(post => (
 									<div key={post.id} className="media-item">
 										<img src={post.image} alt="Media" className="media-image" />
 									</div>
 								))} */}
-								</div>
-							</div>
-						)}
+                </div>
+              </div>
+            )}
 
 						{activeSection === 'liked' && (
 							<div className="profile-liked">

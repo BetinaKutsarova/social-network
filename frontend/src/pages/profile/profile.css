@@ -187,15 +187,15 @@
 
 .profile-content {
   border-radius: 12px;
-  box-shadow: 0 4px 15px var(--color-shadow);
-  border: 1px solid var(--color-border);
+
+  border-top: 1px solid var(--color-border);
 }
 
 .profile-tabs {
   display: flex;
-	justify-content: center;
-	align-items: center;
-	text-align: center;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .profile-tab {
@@ -437,20 +437,20 @@
   .profile-header-info {
     flex-direction: column;
   }
-  
+
   .profile-actions {
     margin-top: 10px;
     margin-left: 0;
   }
-  
+
   .profile-stats {
     justify-content: space-between;
   }
-  
+
   .pets-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
-  
+
   .media-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
@@ -461,11 +461,11 @@
     width: 100px;
     height: 100px;
   }
-  
+
   .profile-avatar-container {
     margin-top: -50px;
   }
-  
+
   .profile-tab {
     font-size: 0.9rem;
     padding: 12px 0;

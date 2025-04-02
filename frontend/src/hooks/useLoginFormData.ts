@@ -25,8 +25,8 @@ export const useLoginFormData = () => {
 	}, []);
 
 	const isLoginFormValid = useCallback(() => {
-		const emailError = loginFormData.email ? loginValidator("email", loginFormData.email) : "";
-		const passwordError = loginFormData.password ? loginValidator("password", loginFormData.password) : "";
+		const emailError = loginValidator("email", loginFormData.email);
+		const passwordError = loginValidator("password", loginFormData.password);
 
 		const newErrors = {
 			email: emailError,
