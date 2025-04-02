@@ -21,7 +21,9 @@ export const updateUserValidationSchema:yup.ObjectSchema<UserUpdateAttributes> =
   'at-least-one-field',
   'At least one field must be provided',
   (value) => {
-    return Object.keys(value).length > 0;
+    return Object.values(value).some(val => 
+      val !== undefined && val !== null && val !== ''
+    );
   }
 );
 

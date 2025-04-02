@@ -9,3 +9,9 @@ export interface RegisterFormData {
     password: string;
     role: 'user' | 'trainer' | 'admin'
 }
+
+export interface UpdateUserData {
+	username?: string;
+	email?: string;
+	avatarUrl?: string;
+}

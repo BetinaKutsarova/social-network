@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './profile.css';
 import { FaEdit, FaCamera } from 'react-icons/fa';
 import { NavBar } from '../../components/ui/navbar';
@@ -6,14 +6,26 @@ import { useAtom } from 'jotai';
 import { activeSectionAtom, userAtom } from '../../state/atoms';
 import { FeedItem } from '../../components/ui/feedItem';
 import { useUserPosts } from '../../hooks/useUserPosts';
+import { UpdateUserProfileModal } from '../../components/ui/updateUserProfileModal';
+import { UpdateUserData } from '../../interfaces/form';
 // import { FeedItemType } from '../../interfaces/dashboard';
 
 
 export const Profile: React.FC = () => {
 	const [activeSection, setActiveSection] = useAtom(activeSectionAtom);
-	const [user] = useAtom(userAtom);
+	const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+	const [user, setUser] = useAtom(userAtom);
 
 	const { userPosts, isLoading, error } = useUserPosts();
+
+	const handleProfileUpdate = (updatedUser: UpdateUserData) => {
+		if (user) {
+			setUser({
+				...user,
+				...updatedUser
+			});
+		}
+	};
 
 	return (
 		<div className="dashboard-container">
@@ -30,12 +42,22 @@ export const Profile: React.FC = () => {
 						</div>
 
 						<div className="profile-header-info">
-							<div className="profile-avatar-container">
-								AVATAR PHOTO
-							</div>
+						<div className="profile-avatar-container">
+							{user?.avatarUrl ? (
+								<img 
+									src={user?.avatarUrl} 
+									alt={`${user?.username}'s avatar`} 
+									className="profile-avatar" 
+								/>
+							) : (
+								<div className="profile-avatar-placeholder">
+									{user?.username.charAt(0).toUpperCase()}
+								</div>
+							)}
+						</div>
 
 							<div className="profile-actions">
-								<button className="edit-profile-button">
+								<button className="edit-profile-button" onClick={() => setIsEditModalOpen(true)}>
 									<FaEdit size={16} /> Edit Profile
 								</button>
 							</div>
@@ -138,6 +160,8 @@ export const Profile: React.FC = () => {
 					</div>
 				</div>
 			</div>
-		</div >
+				{user && ( <UpdateUserProfileModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onProfileUpdate={handleProfileUpdate} />
+      )}
+    </div>
 	);
 };
