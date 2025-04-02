@@ -1,10 +1,9 @@
 import { PostData } from "./profile";
 
 export interface UserData {
-	name: string;
 	email: string;
 	username: string;
-	avatar: string;
+	avatarUrl?: string;
 	followers: number;
 	following: number;
 	posts: PostData[];

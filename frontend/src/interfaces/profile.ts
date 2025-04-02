@@ -5,7 +5,7 @@ export interface UserWithPetsData {
   location?: string;
   website?: string;
   joinDate: string;
-  avatar: string;
+  avatarUrl?: string;
   coverPhoto: string;
   followers: number;
   following: number;

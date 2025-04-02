@@ -21,7 +21,8 @@ authRouter.get(
 				id: ctx.state.user.id,
 				username: ctx.state.user.username,
 				email: ctx.state.user.email,
-				role: ctx.state.user.role
+				role: ctx.state.user.role,
+				avatarUrl: ctx.state.user.avatarUrl
 			}
 		};
 	}

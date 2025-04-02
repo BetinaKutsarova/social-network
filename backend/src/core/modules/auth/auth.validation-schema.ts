@@ -13,7 +13,8 @@ export const registerValidationSchema:yup.ObjectSchema<UserCreationAttributes> =
   password: yup.string()
     .min(5, 'Password must be at least 5 characters')
     .required('Password is required'),
-  role: yup.string().oneOf(['user', 'trainer', 'admin']).default('user')
+  role: yup.string().oneOf(['user', 'trainer', 'admin']).default('user'),
+	avatarUrl: yup.string().optional()
 });
 
 // ObjectSchema enforces that the schema exactly matches UserCreationAttributes
