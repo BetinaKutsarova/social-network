@@ -1,6 +1,8 @@
 import { FaTrash, FaHeart, FaComment } from "react-icons/fa";
 import type { FeedItemProps } from "../../interfaces/dashboard";
 import { deletePost } from "../../services/deletePost";
+import { CommentSection } from "./commentSection";
+import { useState } from "react";
 
 const formatDate = (dateInput: string | Date): string => {
   const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
@@ -13,6 +15,13 @@ export const FeedItem: React.FC<FeedItemProps> = ({
   currentUser,
   onDelete,
 }) => {
+
+	const [showCommentSection, setShowCommentSection] = useState(false);
+
+	const toggleCommentSection = () => {
+    setShowCommentSection(!showCommentSection);
+  };
+
   const canDelete =
     currentUser &&
     (currentUser.id === item.author.id || currentUser.role === "admin");
@@ -54,7 +63,7 @@ export const FeedItem: React.FC<FeedItemProps> = ({
             </span>{" "}
             {item.likes}
           </div>
-          <div className="feed-item-action">
+          <div className="feed-item-action" onClick={toggleCommentSection}>
             <span>
               <FaComment />
             </span>{" "}
@@ -73,6 +82,9 @@ export const FeedItem: React.FC<FeedItemProps> = ({
           </div>
         </div>
       </div>
+
+			{showCommentSection && <CommentSection postId={item.id} />}
+			
     </div>
   );
 };
