@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import "./profile.css";
 import { FaEdit, FaCamera } from "react-icons/fa";
 import { NavBar } from "../../components/ui/navbar";
@@ -7,62 +7,74 @@ import { activeSectionAtom, userAtom } from "../../state/atoms";
 import { FeedItem } from "../../components/ui/feedItem";
 import { useUserPosts } from "../../hooks/useUserPosts";
 import { Pagination } from "../../components/ui/pagination";
-import { UpdateUserProfileModal } from '../../components/ui/updateUserProfileModal';
-import { UpdateUserData } from '../../interfaces/form';
+import { UpdateUserProfileModal } from "../../components/ui/updateUserProfileModal";
+import { UpdateUserData } from "../../interfaces/form";
 // import { FeedItemType } from '../../interfaces/dashboard';
 
 export const Profile: React.FC = () => {
-	const [activeSection, setActiveSection] = useAtom(activeSectionAtom);
-	const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
-	const [user, setUser] = useAtom(userAtom);
+  const [activeSection, setActiveSection] = useAtom(activeSectionAtom);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [user, setUser] = useAtom(userAtom);
 
-  const { userPosts, isLoading, error, pagination, handlePageChange } =
+  const { userPosts, isLoading, error, pagination, handlePageChange, refreshPosts } =
     useUserPosts();
 
-	const handleProfileUpdate = (updatedUser: UpdateUserData) => {
-		if (user) {
-			setUser({
-				...user,
-				...updatedUser
-			});
-		}
-	};
+  const handleProfileUpdate = (updatedUser: UpdateUserData) => {
+    if (user) {
+      setUser({
+        ...user,
+        ...updatedUser,
+      });
+    }
+  };
 
-	return (
-		<div className="dashboard-container">
-			<NavBar />
+  return (
+    <div className="dashboard-container">
+      <NavBar />
 
       <div className="main-content">
         <div className="profile-container">
           <div className="profile-header-container">
-            <div className="profile-cover-photo">
-              PHOTO
+            <div
+              className="profile-cover-photo"
+              style={{
+                height: "200px",
+                width: "100%",
+                backgroundImage: 'url("https://picsum.photos/1200/400")',
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                position: "relative",
+              }}
+            >
               <button className="edit-cover-photo">
                 <FaCamera size={16} />
               </button>
             </div>
 
-						<div className="profile-header-info">
-						<div className="profile-avatar-container">
-							{user?.avatarUrl ? (
-								<img 
-									src={user?.avatarUrl} 
-									alt={`${user?.username}'s avatar`} 
-									className="profile-avatar" 
-								/>
-							) : (
-								<div className="profile-avatar-placeholder">
-									{user?.username.charAt(0).toUpperCase()}
-								</div>
-							)}
-						</div>
+            <div className="profile-header-info">
+              <div className="profile-avatar-container">
+                {user?.avatarUrl ? (
+                  <img
+                    src={user?.avatarUrl}
+                    alt={`${user?.username}'s avatar`}
+                    className="profile-avatar"
+                  />
+                ) : (
+                  <div className="profile-avatar-placeholder">
+                    {user?.username.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
 
-							<div className="profile-actions">
-								<button className="edit-profile-button" onClick={() => setIsEditModalOpen(true)}>
-									<FaEdit size={16} /> Edit Profile
-								</button>
-							</div>
-						</div>
+              <div className="profile-actions">
+                <button
+                  className="edit-profile-button"
+                  onClick={() => setIsEditModalOpen(true)}
+                >
+                  <FaEdit size={16} /> Edit Profile
+                </button>
+              </div>
+            </div>
 
             <div className="profile-user-info">
               <p className="profile-username">{user?.username}</p>
@@ -117,7 +129,7 @@ export const Profile: React.FC = () => {
                 ) : userPosts.length > 0 ? (
                   <>
                     {userPosts.map((post) => (
-                      <FeedItem key={post.id} item={post} />
+                      <FeedItem key={post.id} item={post} avatarUrl={user?.avatarUrl} currentUser={user} onDelete={() => { refreshPosts(pagination.page)}}/>
                     ))}
 
                     {userPosts.length > 0 && (
@@ -172,16 +184,21 @@ export const Profile: React.FC = () => {
               </div>
             )}
 
-						{activeSection === 'liked' && (
-							<div className="profile-liked">
-								<p className="no-content-message">No liked posts to show.</p>
-							</div>
-						)}
-					</div>
-				</div>
-			</div>
-				{user && ( <UpdateUserProfileModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} onProfileUpdate={handleProfileUpdate} />
+            {activeSection === "liked" && (
+              <div className="profile-liked">
+                <p className="no-content-message">No liked posts to show.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {user && (
+        <UpdateUserProfileModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onProfileUpdate={handleProfileUpdate}
+        />
       )}
     </div>
-	);
+  );
 };

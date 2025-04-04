@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./dashboard.css";
 import { NavBar } from "../../components/ui/navbar";
 import type { TrendingTopic, SuggestionUser } from "../../interfaces/dashboard";
@@ -7,11 +7,14 @@ import { userAtom } from "../../state/atoms";
 import { useAllPosts } from "../../hooks/useAllPosts";
 import { FeedItem } from "../../components/ui/feedItem";
 import { Pagination } from "../../components/ui/pagination";
+import { createPost, CreatePostData } from "../../services/createPost";
 
 export const Dashboard: React.FC = () => {
   const [user] = useAtom(userAtom);
+	const [postContent, setPostContent] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { allPosts, isLoading, error, pagination, handlePageChange } =
+  const { allPosts, isLoading, error, pagination, handlePageChange, refreshPosts } =
     useAllPosts();
 
   // Sample trending topics
@@ -44,6 +47,33 @@ export const Dashboard: React.FC = () => {
     },
   ];
 
+  const handlePostContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setPostContent(e.target.value);
+  };
+
+  const handleSubmitPost = async () => {
+    if (!postContent.trim()) {
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      const postData: CreatePostData = {
+        content: postContent
+      };
+
+      await createPost(postData);
+      setPostContent("");
+      refreshPosts();
+      
+    } catch (error) {
+      console.error("Failed to create post:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       <div className="dashboard-container">
@@ -52,10 +82,14 @@ export const Dashboard: React.FC = () => {
           <div className="feed">
             <div className="post-creator">
               <div className="post-input-container">
+								<img src={user?.avatarUrl} alt="My avatar" className="avatar" width="40" height="40" />
                 <div className="post-input-wrapper">
                   <textarea
                     className="post-textarea"
                     placeholder="What's barking?"
+										value={postContent}
+                    onChange={handlePostContentChange}
+                    disabled={isSubmitting}
                   ></textarea>
                   <div className="post-actions">
                     <div className="post-options">
@@ -63,7 +97,13 @@ export const Dashboard: React.FC = () => {
                       <button className="post-option-button">Video</button>
                       <button className="post-option-button">Poll</button>
                     </div>
-                    <button className="post-button">Post</button>
+										<button 
+                      className="post-button"
+                      onClick={handleSubmitPost}
+                      disabled={isSubmitting || !postContent.trim()}
+                    >
+                      {isSubmitting ? "Posting..." : "Post"}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -75,7 +115,7 @@ export const Dashboard: React.FC = () => {
               ) : error ? (
                 <p className="error-message">{error}</p>
               ) : allPosts.length > 0 ? (
-                allPosts.map((post) => <FeedItem key={post.id} item={post} />)
+                allPosts.map((post) => <FeedItem key={post.id} item={post} currentUser={user} onDelete={() => {refreshPosts(pagination.page)}} />)
               ) : (
                 <p className="no-posts-message">No posts to show.</p>
               )}
@@ -97,6 +137,7 @@ export const Dashboard: React.FC = () => {
           <div className="right-sidebar">
             <div className="profile-card">
               <div className="profile-header">
+								<img src={user?.avatarUrl} alt="Profile" className="avatar" width="64" height="64" />
                 <div>
                   <h3 className="profile-username">{user?.username}</h3>
                   <p className="profile-email">{user?.email}</p>

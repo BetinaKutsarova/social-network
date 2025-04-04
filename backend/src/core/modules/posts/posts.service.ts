@@ -6,8 +6,13 @@ import {
 } from "../../../models/Post";
 
 export class PostService {
-  static async getAll(): Promise<PostAttributes[]> {
-    const posts = await Post.findAll({
+	static async getAll(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{ posts: PostAttributes[]; total: number }> {
+    const offset = (page - 1) * limit;
+
+    const { rows: posts, count: total } = await Post.findAndCountAll({
       include: [
         {
           model: User,
@@ -15,8 +20,12 @@ export class PostService {
           attributes: ["id", "username", "email"],
         },
       ],
+      order: [["createdAt", "DESC"]],
+      limit,
+      offset,
     });
-    return posts;
+
+    return { posts, total };
   }
 
   static async getById(id: string): Promise<PostAttributes | null> {

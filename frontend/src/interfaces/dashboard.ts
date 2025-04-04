@@ -1,3 +1,4 @@
+import { User, UserPost } from "../state/atoms";
 import { PostData } from "./profile";
 
 export interface UserData {
@@ -10,22 +11,24 @@ export interface UserData {
 }
 
 export interface AuthorType {
-  id: number;
+  id: string;
   username: string;
   email: string;
 }
 
 export interface FeedItemType {
-	id: number;
+	id: string;
 	author: AuthorType; 
 	username: string;
 	content: string;
 	time: string;
 	likes: number;
 	comments: number;
+	avatarUrl?: string;
 	shares: number;
 	image?: string;
 	createdAt: string;
+	currentUser: User;
 }
 
 export interface TrendingTopic {
@@ -49,5 +52,8 @@ export interface NavItemProps {
 }
 
 export interface FeedItemProps {
-	item: FeedItemType;
+	item: UserPost;
+	avatarUrl?: string;
+	currentUser: User | null;
+	onDelete: () => void;
 }

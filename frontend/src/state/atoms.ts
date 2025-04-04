@@ -9,13 +9,13 @@ export interface User {
 }
 
 export interface AuthorType {
-  id: number;
+  id: string;
   username: string;
 	email: string;
 }
 
 export interface UserPost {
-	id: number;
+	id: string;
 	author: AuthorType;
 	username: string;
   content: string;
