@@ -1,6 +1,5 @@
 import Router from "koa-router";
 import { validator } from "../../validator";
-// import { authMiddleware } from '../auth';
 import { PostService } from "./posts.service";
 import {
   createPostValidationSchema,
@@ -11,8 +10,6 @@ export const postRouter = new Router({
   prefix: "/post",
 });
 
-// postRouter.use(authMiddleware);
-
 postRouter.get("/", async (ctx) => {
 	const page = parseInt(String(ctx.query.page ?? "1"));
   const limit = parseInt(String(ctx.query.limit ?? "10"));
@@ -21,10 +18,9 @@ postRouter.get("/", async (ctx) => {
   ctx.body = { posts, total };
 });
 
-// get all posts of logged-in user
 postRouter.get("/:userId", async (ctx) => {
   const { userId } = ctx.params;
-	const page = parseInt(String(ctx.query.page ?? "1"));
+  const page = parseInt(String(ctx.query.page ?? "1"));
   const limit = parseInt(String(ctx.query.limit ?? "10"));
 
   if (!userId) {
@@ -34,7 +30,14 @@ postRouter.get("/:userId", async (ctx) => {
   }
 
   try {
-    const { posts, total } = await PostService.getByUserId(userId, page, limit);
+    const allPosts = await PostService.getByUserId(userId);
+    
+    const total = allPosts.length;
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+  
+    const posts = allPosts.slice(startIndex, endIndex);
+    
     ctx.body = { posts, total };
   } catch (error) {
     ctx.status = 500;
