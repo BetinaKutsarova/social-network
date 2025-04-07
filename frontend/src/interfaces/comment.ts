@@ -1,4 +1,4 @@
-export interface CreateCommentData {
+export interface CreateCommentSectionProps {
   postId: string;
-  content?: string;
+	onCommentAdded: () => void;
 }

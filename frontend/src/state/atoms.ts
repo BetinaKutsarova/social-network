@@ -25,8 +25,14 @@ export interface UserPost {
   likes?: number;
 }
 
+export interface CommentCounts {
+  [postId: string]: number;
+}
+
 export const userAtom = atom<User | null>(null);
 export const activeTabAtom = atom<string>('dashboard');
 export const activeSectionAtom = atom<string>('posts');
 export const userPostsAtom = atom<UserPost[]>([]);
 export const allPostsAtom = atom<UserPost[]>([]);
+
+export const commentCountFamily = atom<CommentCounts>({});

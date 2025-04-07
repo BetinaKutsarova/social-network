@@ -1,8 +1,9 @@
 import { FaTrash, FaHeart, FaComment } from "react-icons/fa";
 import type { FeedItemProps } from "../../interfaces/dashboard";
 import { deletePost } from "../../services/deletePost";
-import { CommentSection } from "./commentSection";
+import { CreateCommentSection } from "./createCommentSection";
 import { useState } from "react";
+import { useCommentCount } from "../../hooks/useCommentCount";
 
 const formatDate = (dateInput: string | Date): string => {
   const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
@@ -17,10 +18,11 @@ export const FeedItem: React.FC<FeedItemProps> = ({
 }) => {
 
 	const [showCommentSection, setShowCommentSection] = useState(false);
+	const { commentCount, incrementCommentCount } = useCommentCount(item.id, item.commentCount);
 
 	const toggleCommentSection = () => {
-    setShowCommentSection(!showCommentSection);
-  };
+		setShowCommentSection(!showCommentSection);
+	};
 
   const canDelete =
     currentUser &&
@@ -67,7 +69,7 @@ export const FeedItem: React.FC<FeedItemProps> = ({
             <span>
               <FaComment />
             </span>{" "}
-            {item.commentCount}
+            {commentCount}
           </div>
           <div className="feed-item-action">
             {canDelete && (
@@ -83,7 +85,7 @@ export const FeedItem: React.FC<FeedItemProps> = ({
         </div>
       </div>
 
-			{showCommentSection && <CommentSection postId={item.id} />}
+			{showCommentSection && <CreateCommentSection postId={item.id} onCommentAdded={incrementCommentCount} /> }
 			
     </div>
   );
