@@ -67,7 +67,7 @@ export const FeedItem: React.FC<FeedItemProps> = ({
             <span>
               <FaComment />
             </span>{" "}
-            {item.comments}
+            {item.commentCount}
           </div>
           <div className="feed-item-action">
             {canDelete && (

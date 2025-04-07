@@ -15,16 +15,14 @@ export interface AuthorType {
 }
 
 export interface UserPost {
-	id: string;
-	author: AuthorType;
-	username: string;
+  id: string;
+  userId: string;          
   content: string;
-  time: string;
-  likes: number;
-  comments: number;
-  shares: number;
-  image?: string;
-	createdAt: string;
+  createdAt: string;       
+  updatedAt: string;       
+  author: AuthorType;
+  commentCount: number;
+  likes?: number;
 }
 
 export const userAtom = atom<User | null>(null);
