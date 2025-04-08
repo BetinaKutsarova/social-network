@@ -41,7 +41,8 @@ export class CommentService {
 				model: User,
 				as: 'author',
 				attributes: ['id', 'username', 'email']
-			}]
+			}],
+			order: [['createdAt', 'DESC']]
 		});
 
 		return comments;
