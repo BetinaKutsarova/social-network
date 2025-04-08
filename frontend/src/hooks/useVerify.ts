@@ -22,7 +22,7 @@ export const useVerify = () => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [setUser, user]);
+	}, [user, setUser]);
 	
 	useEffect(() => {
 		verifyAuth();
