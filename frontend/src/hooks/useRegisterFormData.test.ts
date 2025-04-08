@@ -1,16 +1,14 @@
 import { renderHook, act } from "@testing-library/react";
 import { useRegisterFormData } from "./useRegisterFormData";
 import { describe, expect, test, jest, beforeEach } from "@jest/globals";
-
-const mockRegisterValidator = jest.fn();
+import { registerValidator } from "../utils/registerValidator";
 
 jest.mock("../utils/registerValidator", () => ({
-  registerValidator: mockRegisterValidator,
+  registerValidator: jest.fn(),
 }));
 
-
-
 describe("useRegisterFormData", () => {
+	const mockRegisterValidator = jest.mocked(registerValidator)
   beforeEach(() => {
     mockRegisterValidator.mockReset();
     mockRegisterValidator.mockImplementation(() => "");

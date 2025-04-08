@@ -6,9 +6,9 @@ import { describe, expect, test, jest, beforeEach } from "@jest/globals";
 jest.mock("../utils/loginValidator", () => ({
   loginValidator: jest.fn(),
 }));
-const mockLoginValidator = loginValidator as jest.Mock;
 
 describe("useLoginFormData", () => {
+	const mockLoginValidator = jest.mocked(loginValidator)
   beforeEach(() => {
     mockLoginValidator.mockReset();
     mockLoginValidator.mockImplementation(() => "");
