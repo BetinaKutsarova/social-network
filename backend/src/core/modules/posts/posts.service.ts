@@ -4,9 +4,10 @@ import {
   PostCreationAttributes,
   PostUpdateAttributes,
 } from "../../../models/Post";
+import sequelize from "../../db";
 
 export class PostService {
-	static async getAll(
+  static async getAll(
     page: number = 1,
     limit: number = 10
   ): Promise<{ posts: PostAttributes[]; total: number }> {
@@ -20,6 +21,18 @@ export class PostService {
           attributes: ["id", "username", "email"],
         },
       ],
+      attributes: {
+        include: [
+          [
+            sequelize.literal(`(
+              SELECT COUNT(*)
+              FROM comments
+              WHERE comments.post_id = "Post".id
+            )`),
+            "commentCount",
+          ],
+        ],
+      },
       order: [["createdAt", "DESC"]],
       limit,
       offset,
@@ -42,7 +55,6 @@ export class PostService {
 
     return post;
   }
-
   static async getByUserId(userId: string): Promise<PostAttributes[]> {
     const posts = await Post.findAll({
       where: {
@@ -56,6 +68,18 @@ export class PostService {
         },
       ],
       order: [["createdAt", "DESC"]],
+      attributes: {
+        include: [
+          [
+            sequelize.literal(`(
+							SELECT COUNT(*)
+							FROM comments
+							WHERE comments.post_id = "Post".id
+						)`),
+            "commentCount",
+          ],
+        ],
+      },
     });
 
     return posts;

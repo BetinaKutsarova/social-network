@@ -15,16 +15,18 @@ export interface AuthorType {
 }
 
 export interface UserPost {
-	id: string;
-	author: AuthorType;
-	username: string;
+  id: string;
+  userId: string;          
   content: string;
-  time: string;
-  likes: number;
-  comments: number;
-  shares: number;
-  image?: string;
-	createdAt: string;
+  createdAt: string;       
+  updatedAt: string;       
+  author: AuthorType;
+  commentCount: number;
+  likes?: number;
+}
+
+export interface CommentCounts {
+  [postId: string]: number;
 }
 
 export const userAtom = atom<User | null>(null);
@@ -32,3 +34,5 @@ export const activeTabAtom = atom<string>('dashboard');
 export const activeSectionAtom = atom<string>('posts');
 export const userPostsAtom = atom<UserPost[]>([]);
 export const allPostsAtom = atom<UserPost[]>([]);
+
+export const commentCountFamily = atom<CommentCounts>({});

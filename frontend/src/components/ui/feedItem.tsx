@@ -1,11 +1,12 @@
 import { FaTrash, FaHeart, FaComment } from "react-icons/fa";
 import type { FeedItemProps } from "../../interfaces/dashboard";
 import { deletePost } from "../../services/deletePost";
-
-const formatDate = (dateInput: string | Date): string => {
-  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
-  return date.toLocaleString();
-};
+import { CreateCommentSection } from "./createCommentSection";
+import { useState } from "react";
+import { useCommentCount } from "../../hooks/useCommentCount";
+import { formatDate } from "../../utils/formatDate";
+import { CommentsList } from "./commentsList";
+import { useComments } from "../../hooks/useComments";
 
 export const FeedItem: React.FC<FeedItemProps> = ({
   item,
@@ -13,6 +14,20 @@ export const FeedItem: React.FC<FeedItemProps> = ({
   currentUser,
   onDelete,
 }) => {
+
+	const [showCommentSection, setShowCommentSection] = useState(false);
+	const { commentCount, incrementCommentCount } = useCommentCount(item.id, item.commentCount);
+	const { comments, loading, error, refreshComments } = useComments(item.id);
+
+	const handleCommentAdded = () => {
+    incrementCommentCount();
+    refreshComments(); 
+  };
+
+	const toggleCommentSection = () => {
+		setShowCommentSection(!showCommentSection);
+	};
+
   const canDelete =
     currentUser &&
     (currentUser.id === item.author.id || currentUser.role === "admin");
@@ -54,11 +69,11 @@ export const FeedItem: React.FC<FeedItemProps> = ({
             </span>{" "}
             {item.likes}
           </div>
-          <div className="feed-item-action">
+          <div className="feed-item-action" onClick={toggleCommentSection}>
             <span>
               <FaComment />
             </span>{" "}
-            {item.comments}
+            {commentCount}
           </div>
           <div className="feed-item-action">
             {canDelete && (
@@ -73,6 +88,10 @@ export const FeedItem: React.FC<FeedItemProps> = ({
           </div>
         </div>
       </div>
+
+			{showCommentSection && <CreateCommentSection postId={item.id} onCommentAdded={handleCommentAdded} /> }
+			{showCommentSection && <CommentsList comments={comments} loading={loading} error={error} />}
+			
     </div>
   );
 };

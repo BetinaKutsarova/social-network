@@ -6,6 +6,7 @@ export interface PostAttributes {
   id: string;
   userId: string;
   content: string;
+	commentCount?: number;
 }
 
 export type PostCreationAttributes = Omit<PostAttributes, 'id' | 'userId'>;
