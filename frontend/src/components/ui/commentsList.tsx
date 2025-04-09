@@ -3,13 +3,18 @@ import { Comment, CommentInterface } from "./comment";
 import "./comment.css";
 
 interface CommentsListProps {
-	comments: CommentInterface[];
-	loading: boolean;
-	error: string;
+  comments: CommentInterface[];
+  loading: boolean;
+  error: string;
+  onCommentDeleted: () => void;
 }
 
-export const CommentsList: React.FC<CommentsListProps> = ({comments, loading, error }) => {
-
+export const CommentsList: React.FC<CommentsListProps> = ({
+  comments,
+  loading,
+  error,
+  onCommentDeleted,
+}) => {
   if (loading) {
     return <div className="comments-loading">Loading comments...</div>;
   }
@@ -26,9 +31,12 @@ export const CommentsList: React.FC<CommentsListProps> = ({comments, loading, er
     <div className="comments-list">
       {comments?.length > 0 &&
         comments.map((comment) => (
-          <Comment key={comment.id} comment={comment} />
+          <Comment
+            key={comment.id}
+            comment={comment}
+            onCommentDeleted={onCommentDeleted}
+          />
         ))}
     </div>
   );
 };
-
