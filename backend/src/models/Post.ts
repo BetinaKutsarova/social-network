@@ -9,7 +9,7 @@ export interface PostAttributes {
 	commentCount?: number;
 }
 
-export type PostCreationAttributes = Omit<PostAttributes, 'id' | 'userId'>;
+export type PostCreationAttributes = Omit<PostAttributes, 'id' | 'userId' | 'commentCount'>;
 export type PostUpdateAttributes = Partial<PostCreationAttributes>;
 
 class Post extends Model<PostAttributes, PostCreationAttributes> {
