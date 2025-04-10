@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { likeCountsAtom, userLikedStatusAtom } from "../state/atoms";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "../services/api";
 
 export const useLikeCount = (commentId: string, initialCount: number = 0) => {
@@ -18,6 +18,8 @@ export const useLikeCount = (commentId: string, initialCount: number = 0) => {
         const response = await api.get(`/comment/${commentId}/like/count`);
         const count = response.data.count;
 
+				console.log(count)
+
         setLikeCounts((prev) => ({
           ...prev,
           [commentId]: count,
@@ -31,12 +33,11 @@ export const useLikeCount = (commentId: string, initialCount: number = 0) => {
       }
     };
 
-    if (likeCounts[commentId] === undefined) {
-      fetchLikeCount();
-    }
-  }, [commentId, initialCount, likeCounts, setLikeCounts]);
+    fetchLikeCount();
 
-  const toggleLike = async () => {
+  }, [commentId, initialCount, setLikeCounts]);
+
+  const toggleLike = useCallback(async () => {
     if (isLoading) return;
     setIsLoading(true);
     setError(null);
@@ -73,7 +74,7 @@ export const useLikeCount = (commentId: string, initialCount: number = 0) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [commentId, hasLiked, isLoading, setLikeCounts, setUserLikedStatus]);
 
   return { likeCount, hasLiked, toggleLike, isLoading, error };
 };
