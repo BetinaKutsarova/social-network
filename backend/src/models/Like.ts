@@ -6,7 +6,7 @@ import Comment from './Comment';
 export interface LikeAttributes {
   id: string;
   userId: string;
-  commentId?: string;
+  commentId: string;
 }
 
 export type LikeCreationAttributes = Omit<LikeAttributes, 'id'>
@@ -14,7 +14,7 @@ export type LikeCreationAttributes = Omit<LikeAttributes, 'id'>
 class Like extends Model<LikeAttributes, LikeCreationAttributes> {
   declare id: string;
   declare userId: string;
-  declare commentId?: string;
+  declare commentId: string;
 }
 
 Like.init(
