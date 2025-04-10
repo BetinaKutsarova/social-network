@@ -10,6 +10,7 @@ import { userRouter } from './core/modules/users';
 import { postRouter } from './core/modules/posts';
 import { commentRouter } from './core/modules/comments';
 import { petRouter } from './core/modules/pets';
+import { likeRouter } from './core/modules/likes';
 
 
 const app = new Koa();
@@ -63,6 +64,7 @@ rootRouter.use(userRouter.routes());
 rootRouter.use(postRouter.routes());
 rootRouter.use(commentRouter.routes());
 rootRouter.use(petRouter.routes());
+rootRouter.use(likeRouter.routes())
 
 app.use(rootRouter.routes());
 app.use(rootRouter.allowedMethods());
