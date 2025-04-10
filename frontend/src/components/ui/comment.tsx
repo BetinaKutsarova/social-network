@@ -1,13 +1,14 @@
 import React from "react";
-import { FaHeart, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { formatDate } from "../../utils/formatDate";
 import { useAtom } from "jotai";
 import { userAtom } from "../../state/atoms";
 import { deleteComment } from "../../services/deleteComment";
+import { LikeButton } from "./likeButton";
 
 export interface CommentInterface {
   id: string;
-	postId: string;
+  postId: string;
   content: string;
   createdAt: string;
   likes: number;
@@ -58,10 +59,10 @@ export const Comment: React.FC<CommentProps> = ({
 
         <div className="comment-actions">
           <div className="comment-action">
-            <span>
-              <FaHeart />
-            </span>{" "}
-            {comment.likes}
+            <LikeButton
+              commentId={comment.id}
+              initialLikeCount={comment.likes}
+            />
           </div>
           <div className="comment-action">
             {canDelete && (
