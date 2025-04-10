@@ -1,4 +1,4 @@
-import { FaTrash, FaHeart, FaComment } from "react-icons/fa";
+import { FaTrash, FaComment } from "react-icons/fa";
 import type { FeedItemProps } from "../../interfaces/dashboard";
 import { deletePost } from "../../services/deletePost";
 import { CreateCommentSection } from "./createCommentSection";
@@ -14,19 +14,24 @@ export const FeedItem: React.FC<FeedItemProps> = ({
   currentUser,
   onDelete,
 }) => {
+  const [showCommentSection, setShowCommentSection] = useState(false);
+  const { commentCount, incrementCommentCount, decrementCommentCount } =
+    useCommentCount(item.id, item.commentCount);
+  const { comments, loading, error, refreshComments } = useComments(item.id);
 
-	const [showCommentSection, setShowCommentSection] = useState(false);
-	const { commentCount, incrementCommentCount } = useCommentCount(item.id, item.commentCount);
-	const { comments, loading, error, refreshComments } = useComments(item.id);
-
-	const handleCommentAdded = () => {
+  const handleCommentAdded = () => {
     incrementCommentCount();
-    refreshComments(); 
+    refreshComments();
   };
 
-	const toggleCommentSection = () => {
-		setShowCommentSection(!showCommentSection);
-	};
+  const handleCommentDeleted = () => {
+    decrementCommentCount();
+    refreshComments();
+  };
+
+  const toggleCommentSection = () => {
+    setShowCommentSection(!showCommentSection);
+  };
 
   const canDelete =
     currentUser &&
@@ -63,12 +68,6 @@ export const FeedItem: React.FC<FeedItemProps> = ({
           <p className="feed-item-content">{item.content}</p>
         </div>
         <div className="feed-item-actions">
-          <div className="feed-item-action">
-            <span>
-              <FaHeart />
-            </span>{" "}
-            {item.likes}
-          </div>
           <div className="feed-item-action" onClick={toggleCommentSection}>
             <span>
               <FaComment />
@@ -89,9 +88,20 @@ export const FeedItem: React.FC<FeedItemProps> = ({
         </div>
       </div>
 
-			{showCommentSection && <CreateCommentSection postId={item.id} onCommentAdded={handleCommentAdded} /> }
-			{showCommentSection && <CommentsList comments={comments} loading={loading} error={error} />}
-			
+      {showCommentSection && (
+        <CreateCommentSection
+          postId={item.id}
+          onCommentAdded={handleCommentAdded}
+        />
+      )}
+      {showCommentSection && (
+        <CommentsList
+          comments={comments}
+          loading={loading}
+          error={error}
+          onCommentDeleted={handleCommentDeleted}
+        />
+      )}
     </div>
   );
 };

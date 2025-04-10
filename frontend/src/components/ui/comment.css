@@ -92,3 +92,8 @@
 .comments-list .comment + .comment {
   margin-top: 12px;
 }
+
+.comments-empty {
+	margin-top: 10px;
+	text-align: center;
+}

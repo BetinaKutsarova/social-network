@@ -22,8 +22,16 @@ export const useCommentCount = (postId: string, initialCount: number) => {
     }));
   };
 
+  const decrementCommentCount = () => {
+    setCommentCounts((prev) => ({
+      ...prev,
+      [postId]: Math.max(0, (prev[postId] || 0) - 1),
+    }));
+  };
+
   return {
     commentCount: currentCommentCount,
     incrementCommentCount,
+    decrementCommentCount,
   };
 };
