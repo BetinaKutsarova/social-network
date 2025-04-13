@@ -118,6 +118,10 @@ postRouter.delete("/:id", async (ctx) => {
     return;
   }
 
-  await PostService.delete(id);
+  try  { 
+		await PostService.delete(id);
+	} catch(error) {
+		console.error("Error in delete post endpoint:", error);
+	}
   ctx.status = 204;
 });

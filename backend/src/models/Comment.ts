@@ -59,7 +59,7 @@ Comment.init(
 
 Comment.belongsTo(Post, { foreignKey: 'postId', as: 'post' });
 Comment.belongsTo(User, { foreignKey: 'userId', as: 'author' });
-Post.hasMany(Comment, { foreignKey: 'postId', as: 'comments' });
+Post.hasMany(Comment, { foreignKey: 'postId', as: 'comments', onDelete: 'CASCADE'});
 User.hasMany(Comment, { foreignKey: 'userId', as: 'comments' });
 
 export default Comment;
