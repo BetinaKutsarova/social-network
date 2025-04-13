@@ -4,6 +4,7 @@ import { Register } from './pages/register/register'
 import { Dashboard } from './pages/dashboard/dashboard'
 import { ProtectedRoute } from './components/other/protectedRoute'
 import { Profile } from './pages/profile/profile'
+import { Explore } from './pages/explore/explore'
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile/>} />
+					<Route path="/profile/:userId" element={<Profile />} />
+					<Route path="/explore" element={<Explore/>} />
 
         </Route>
 

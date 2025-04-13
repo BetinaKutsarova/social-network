@@ -35,7 +35,8 @@ export const NavBar: React.FC = () => {
 					icon={<FaSearch size={20} />}
 					label="Explore"
 					isActive={activeTab === 'explore'}
-					onClick={() => setActiveTab('explore')}
+					onClick={() => {setActiveTab('explore');
+						 navigate('/explore')}}
 				/>
 				<NavItem
 					icon={<FaEnvelope size={20} />}
