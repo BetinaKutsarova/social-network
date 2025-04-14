@@ -1,26 +1,61 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./profile.css";
 import { FaEdit, FaCamera } from "react-icons/fa";
 import { NavBar } from "../../components/ui/navbar";
 import { useAtom } from "jotai";
-import { activeSectionAtom, userAtom } from "../../state/atoms";
+import { activeSectionAtom, userAtom, profileAtom, activeTabAtom } from "../../state/atoms";
 import { FeedItem } from "../../components/ui/feedItem";
 import { useUserPosts } from "../../hooks/useUserPosts";
 import { Pagination } from "../../components/ui/pagination";
 import { UpdateUserProfileModal } from "../../components/ui/updateUserProfileModal";
 import { UpdateUserData } from "../../interfaces/form";
-// import { FeedItemType } from '../../interfaces/dashboard';
+import { useParams } from "react-router-dom";
+import { api } from "../../services/api";
 
 export const Profile: React.FC = () => {
   const [activeSection, setActiveSection] = useAtom(activeSectionAtom);
+	const[, setActiveTab] = useAtom(activeTabAtom);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [user, setUser] = useAtom(userAtom);
+  const [profile, setProfile] = useAtom(profileAtom);
+  const [, setIsLoading] = useState(true);
 
-  const { userPosts, isLoading, error, pagination, handlePageChange, refreshPosts } =
-    useUserPosts();
+  const params = useParams();
+  const userId = params.userId;
+  const isOwnProfile = !userId || (user && userId === user.id);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      setIsLoading(true);
+      try {
+        if (userId && userId !== user?.id) {
+          const fetchedProfile = await api.get(`users/${userId}`);
+          setProfile(fetchedProfile.data);
+        } else {
+          setProfile(user);
+					setActiveTab("profile")
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, [userId, user, setProfile, setActiveTab]);
+
+  const {
+    userPosts,
+    isLoading: postsLoading,
+    error,
+    pagination,
+    handlePageChange,
+    refreshPosts,
+  } = useUserPosts(userId && !isOwnProfile ? userId : undefined);
 
   const handleProfileUpdate = (updatedUser: UpdateUserData) => {
-    if (user) {
+    if (user && isOwnProfile) {
       setUser({
         ...user,
         ...updatedUser,
@@ -46,39 +81,47 @@ export const Profile: React.FC = () => {
                 position: "relative",
               }}
             >
-              <button className="edit-cover-photo">
-                <FaCamera size={16} />
-              </button>
+              {isOwnProfile && (
+                <button className="edit-cover-photo">
+                  <FaCamera size={16} />
+                </button>
+              )}
             </div>
 
             <div className="profile-header-info">
               <div className="profile-avatar-container">
-                {user?.avatarUrl ? (
+                {profile?.avatarUrl ? (
                   <img
-                    src={user?.avatarUrl}
-                    alt={`${user?.username}'s avatar`}
+                    src={profile?.avatarUrl}
+                    alt={`${profile?.username}'s avatar`}
                     className="profile-avatar"
                   />
                 ) : (
                   <div className="profile-avatar-placeholder">
-                    {user?.username.charAt(0).toUpperCase()}
+                    {profile?.username.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
 
               <div className="profile-actions">
-                <button
-                  className="edit-profile-button"
-                  onClick={() => setIsEditModalOpen(true)}
-                >
-                  <FaEdit size={16} /> Edit Profile
-                </button>
+                {isOwnProfile ? (
+                  <button
+                    className="edit-profile-button"
+                    onClick={() => setIsEditModalOpen(true)}
+                  >
+                    <FaEdit size={16} /> Edit Profile
+                  </button>
+                ) : (
+                  <button className="message-button">Message</button>
+                )}
               </div>
             </div>
 
             <div className="profile-user-info">
-              <p className="profile-username">{user?.username}</p>
-              <p className="profile-email">{user?.email}</p>
+              <p className="profile-username">{profile?.username}</p>
+              {isOwnProfile && (
+                <p className="profile-email">{profile?.email}</p>
+              )}
 
               <div className="profile-details"></div>
             </div>
@@ -100,7 +143,7 @@ export const Profile: React.FC = () => {
                 }`}
                 onClick={() => setActiveSection("pets")}
               >
-                My Pets
+                {isOwnProfile ? "My Pets" : "Pets"}
               </button>
               <button
                 className={`profile-tab ${
@@ -110,26 +153,36 @@ export const Profile: React.FC = () => {
               >
                 Media
               </button>
-              <button
-                className={`profile-tab ${
-                  activeSection === "liked" ? "active" : ""
-                }`}
-                onClick={() => setActiveSection("liked")}
-              >
-                Liked
-              </button>
+              {isOwnProfile && (
+                <button
+                  className={`profile-tab ${
+                    activeSection === "liked" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveSection("liked")}
+                >
+                  Liked
+                </button>
+              )}
             </div>
 
             {activeSection === "posts" && (
               <div className="feed-items">
-                {isLoading && userPosts.length === 0 ? (
+                {postsLoading && userPosts.length === 0 ? (
                   <p>Loading posts...</p>
                 ) : error ? (
                   <p className="error-message">{error}</p>
                 ) : userPosts.length > 0 ? (
                   <>
                     {userPosts.map((post) => (
-                      <FeedItem key={post.id} item={post} avatarUrl={user?.avatarUrl} currentUser={user} onDelete={() => { refreshPosts(pagination.page)}}/>
+                      <FeedItem
+                        key={post.id}
+                        item={post}
+                        avatarUrl={profile?.avatarUrl}
+                        currentUser={user}
+                        onDelete={() => {
+                          refreshPosts(pagination.page);
+                        }}
+                      />
                     ))}
 
                     {userPosts.length > 0 && (
@@ -140,7 +193,9 @@ export const Profile: React.FC = () => {
                       />
                     )}
 
-                    {isLoading && <p className="loading-message">Loading...</p>}
+                    {postsLoading && (
+                      <p className="loading-message">Loading...</p>
+                    )}
                   </>
                 ) : (
                   <p>No posts to show.</p>
@@ -150,41 +205,25 @@ export const Profile: React.FC = () => {
 
             {activeSection === "pets" && (
               <div className="profile-pets">
-                <div className="add-pet-container">
-                  <button className="add-pet-button">+ Add a new pet</button>
-                </div>
+                {isOwnProfile && (
+                  <div className="add-pet-container">
+                    <button className="add-pet-button">+ Add a new pet</button>
+                  </div>
+                )}
 
-                {/* <div className="pets-grid">
-								{userData?.pets.map(pet => (
-									<div key={pet.id} className="pet-card">
-										<div className="pet-image-container">
-											<img src={pet.avatarUrl} alt={pet.name} className="pet-image" />
-										</div>
-										<div className="pet-info">
-											<h3 className="pet-name">{pet.name}</h3>
-											<p className="pet-details">{pet.species} · {pet.breed}</p>
-											<p className="pet-age">{pet.ageYears}</p>
-											<button className="edit-pet-button">Edit</button>
-										</div>
-									</div>
-								))}
-							</div> */}
+                {/* Pets grid would go here */}
               </div>
             )}
 
             {activeSection === "media" && (
               <div className="profile-media">
                 <div className="media-grid">
-                  {/* {postData.filter(post => post.image).map(post => (
-									<div key={post.id} className="media-item">
-										<img src={post.image} alt="Media" className="media-image" />
-									</div>
-								))} */}
+                  {/* Media grid would go here */}
                 </div>
               </div>
             )}
 
-            {activeSection === "liked" && (
+            {activeSection === "liked" && isOwnProfile && (
               <div className="profile-liked">
                 <p className="no-content-message">No liked posts to show.</p>
               </div>
@@ -192,7 +231,7 @@ export const Profile: React.FC = () => {
           </div>
         </div>
       </div>
-      {user && (
+      {isOwnProfile && user && (
         <UpdateUserProfileModal
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}

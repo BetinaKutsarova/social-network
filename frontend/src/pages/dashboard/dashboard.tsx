@@ -188,7 +188,7 @@ export const Dashboard: React.FC = () => {
                         <p className="suggestion-username">{user.username}</p>
                       </div>
                     </div>
-                    <button className="follow-button">Follow</button>
+                    <button className="message-button">Message</button>
                   </li>
                 ))}
               </ul>

@@ -10,7 +10,6 @@ import { useAtom } from 'jotai';
 
 export const NavBar: React.FC = () => {
 	const [activeTab, setActiveTab] = useAtom(activeTabAtom)
-	console.log(activeTab);
 	const { logout } = useLogout();
 	const navigate = useNavigate();
 

@@ -18,8 +18,6 @@ export const useLikeCount = (commentId: string, initialCount: number = 0) => {
         const response = await api.get(`/comment/${commentId}/like/count`);
         const count = response.data.count;
 
-				console.log(count)
-
         setLikeCounts((prev) => ({
           ...prev,
           [commentId]: count,

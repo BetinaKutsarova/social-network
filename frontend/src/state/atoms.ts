@@ -34,6 +34,7 @@ export type LikeCounts = Record<string, number>;
 export type UserLikedStatus = Record<string, boolean>;
 
 export const userAtom = atom<User | null>(null);
+export const profileAtom = atom<User | null>(null);
 export const activeTabAtom = atom<string>('dashboard');
 export const activeSectionAtom = atom<string>('posts');
 export const userPostsAtom = atom<UserPost[]>([]);

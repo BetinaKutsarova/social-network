@@ -66,7 +66,7 @@ export const Explore: React.FC = () => {
             ) : users.length > 0 ? (
               <>
                 <h2 className="results-title">
-                  {isSearchMode ? `Search Results for "${searchQuery}"` : "All Users"}
+                  {isSearchMode ? `Search Results for "${searchQuery}"` : "All Members"}
                 </h2>
                 <div className="user-grid">
                   {users.map((user) => (

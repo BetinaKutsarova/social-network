@@ -4,7 +4,7 @@ import { activeSectionAtom, userPostsAtom, userAtom } from "../state/atoms";
 import { api } from "../services/api";
 import { PaginationState } from "../interfaces/pagination";
 
-export const useUserPosts = () => {
+export const useUserPosts = (userId?: string) => {
   const [user] = useAtom(userAtom);
   const [activeSection] = useAtom(activeSectionAtom);
   const [userPosts, setUserPosts] = useAtom(userPostsAtom);
@@ -17,15 +17,17 @@ export const useUserPosts = () => {
     hasMore: true,
   });
 
+  const targetUserId = userId || user?.id;
+
   const fetchUserPosts = useCallback(
     async (page: number = 1) => {
-      if (!user?.id) return;
+      if (!targetUserId) return;
 
       setIsLoading(true);
       setError(null);
 
       try {
-        const response = await api.get(`/post/${user.id}`, {
+        const response = await api.get(`/post/${targetUserId}`, {
           params: {
             page,
             limit: pagination.limit,
@@ -47,10 +49,9 @@ export const useUserPosts = () => {
         setIsLoading(false);
       }
     },
-    [user?.id, pagination.limit, setUserPosts]
+    [targetUserId, pagination.limit, setUserPosts]
   );
 
-  // Change page size if needed
   const setPageSize = useCallback(
     (newLimit: number) => {
       setPagination((prev) => ({
@@ -71,10 +72,10 @@ export const useUserPosts = () => {
   );
 
   useEffect(() => {
-    if (activeSection === "posts" && user?.id) {
+    if (activeSection === "posts" && targetUserId) {
       fetchUserPosts(1); // Start with first page
     }
-  }, [activeSection, user?.id, fetchUserPosts]);
+  }, [activeSection, targetUserId, fetchUserPosts]);
 
   return {
     userPosts,

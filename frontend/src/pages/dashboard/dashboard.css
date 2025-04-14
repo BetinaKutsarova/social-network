@@ -335,7 +335,7 @@
   opacity: 0.8;
 }
 
-.follow-button {
+.message-button {
   background-color: transparent;
   color: var(--color-button);
   border: 1px solid var(--color-button);
@@ -347,7 +347,7 @@
   transition: all 0.2s;
 }
 
-.follow-button:hover {
+.message-button:hover {
   background-color: var(--color-button);
   color: white;
 }
