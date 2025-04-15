@@ -6,7 +6,7 @@ import { createPetValidationSchema, updatePetValidationSchema } from './pets.val
 
 
 export const petRouter = new Router({
-	prefix: '/pet'
+	prefix: '/pets'
 });
 
 // petRouter.use(authMiddleware);

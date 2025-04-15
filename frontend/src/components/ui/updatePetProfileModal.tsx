@@ -1,39 +1,40 @@
-import React, { useState, useRef, ChangeEvent, FormEvent } from "react";
-import { FaCamera, FaTimes } from "react-icons/fa";
-import { updateUserProfile } from "../../services/updateUserProfile";
-import { UpdateUserData } from "../../interfaces/form";
-import { userAtom } from "../../state/atoms";
-import { useAtom } from "jotai";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { PetData } from "../../interfaces/profile";
 import { uploadImageToCloud } from "../../utils/uploadImageToCloud";
+import { FaCamera, FaTimes } from "react-icons/fa";
+import { updatePetProfile } from "../../services/updatePetProfile";
 
-interface UpdateUserProfileModalProps {
+interface UpdatePetProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onProfileUpdate: (updatedUser: UpdateUserData) => void;
+  onPetUpdate: (updatedPet: PetData) => void;
+  pet: PetData;
 }
 
-export const UpdateUserProfileModal: React.FC<UpdateUserProfileModalProps> = ({
+export const UpdatePetProfileModal: React.FC<UpdatePetProfileModalProps> = ({
   isOpen,
   onClose,
-  onProfileUpdate,
+  onPetUpdate,
+  pet,
 }) => {
-  const [user] = useAtom(userAtom);
-
-  const [formData, setFormData] = useState({
-    username: user?.username || "",
-    email: user?.email || "",
+  const [formData, setFormData] = useState<Omit<PetData, 'id' | 'userId'>>({
+    name: pet?.name || "",
+    species: pet?.species || "",
+    breed: pet?.breed || "",
+    ageYears: pet?.ageYears || undefined,
+    bio: pet?.bio || "",
   });
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(
-    user?.avatarUrl || null
+    pet?.avatarUrl || null
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -50,7 +51,6 @@ export const UpdateUserProfileModal: React.FC<UpdateUserProfileModalProps> = ({
 
     const file = files[0];
 
-    // Preview the selected image
     setAvatarFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -64,24 +64,25 @@ export const UpdateUserProfileModal: React.FC<UpdateUserProfileModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      let avatarUrl = user?.avatarUrl;
+      let avatarUrl = pet?.avatarUrl;
 
       if (avatarFile) {
         avatarUrl = await uploadImageToCloud(avatarFile, "user-avatars");
       }
 
-      const updateData = {
+      const updateData: PetData = {
+        ...pet,
         ...formData,
         avatarUrl: avatarUrl,
       };
 
-      if (user && user.id) {
-        const updatedUser = await updateUserProfile(user.id, updateData);
-        onProfileUpdate(updatedUser);
+      if (pet && pet.id) {
+        const updatedPet = await updatePetProfile(pet.id, updateData);
+        onPetUpdate(updatedPet);
         onClose();
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Error updating pet profile:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -91,7 +92,7 @@ export const UpdateUserProfileModal: React.FC<UpdateUserProfileModalProps> = ({
     <div className="modal-overlay">
       <div className="modal-content">
         <div className="modal-header">
-          <h2>Edit Profile</h2>
+          <h2>Edit Pet Profile</h2>
           <button className="close-button" onClick={onClose}>
             <FaTimes />
           </button>
@@ -103,12 +104,12 @@ export const UpdateUserProfileModal: React.FC<UpdateUserProfileModalProps> = ({
               {avatarPreview ? (
                 <img
                   src={avatarPreview}
-                  alt="Avatar preview"
+                  alt="Pet avatar preview"
                   className="avatar-preview"
                 />
               ) : (
                 <div className="avatar-placeholder">
-                  {user?.username ? user.username.charAt(0).toUpperCase() : "U"}
+                  {pet?.name ? pet.name.charAt(0).toUpperCase() : "P"}
                 </div>
               )}
               <div className="avatar-overlay">
@@ -126,26 +127,59 @@ export const UpdateUserProfileModal: React.FC<UpdateUserProfileModalProps> = ({
           </div>
 
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="name">Pet Name</label>
             <input
               type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleInputChange}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="species">Species</label>
             <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
+              type="text"
+              id="species"
+              name="species"
+              value={formData.species}
               onChange={handleInputChange}
               required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="breed">Breed (Optional)</label>
+            <input
+              type="text"
+              id="breed"
+              name="breed"
+              value={formData.breed}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="ageYears">Age in Years (Optional)</label>
+            <input
+              type="number"
+              id="ageYears"
+              name="ageYears"
+              value={formData.ageYears || ''}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="bio">Bio (Optional)</label>
+            <textarea
+              id="bio"
+              name="bio"
+              value={formData.bio}
+              onChange={handleInputChange}
+              rows={4}
             />
           </div>
 

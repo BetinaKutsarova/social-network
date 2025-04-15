@@ -17,6 +17,13 @@ likeRouter.get("/count", async (ctx) => {
   ctx.body = count;
 });
 
+likeRouter.get("/status", async (ctx) => {
+  const { commentId } = ctx.params;
+  const userId = ctx.state.user.id;
+  const hasLiked = await LikeService.hasUserLikedComment(userId, commentId);
+  ctx.body = { hasLiked };
+});
+
 likeRouter.post("/", async (ctx) => {
   const { commentId } = ctx.params;
   const userId = ctx.state.user.id;

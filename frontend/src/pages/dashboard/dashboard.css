@@ -148,10 +148,14 @@
   color: var(--color-title);
 }
 
+.feed-item-username {
+  font-weight: 600;
+}
+
 .feed-item-username,
 .feed-item-time {
   color: var(--color-text-dark);
-  font-size: 14px;
+  font-size: 15px;
   opacity: 0.8;
 }
 

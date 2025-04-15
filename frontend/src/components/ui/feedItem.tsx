@@ -7,10 +7,10 @@ import { useCommentCount } from "../../hooks/useCommentCount";
 import { formatDate } from "../../utils/formatDate";
 import { CommentsList } from "./commentsList";
 import { useComments } from "../../hooks/useComments";
+import { Link } from "react-router-dom";
 
 export const FeedItem: React.FC<FeedItemProps> = ({
   item,
-  avatarUrl,
   currentUser,
   onDelete,
 }) => {
@@ -51,17 +51,20 @@ export const FeedItem: React.FC<FeedItemProps> = ({
   return (
     <div className="feed-item">
       <div className="feed-item-header">
-        <img
+        {/* <img
           src={avatarUrl}
           alt={item.author.username}
           className="avatar"
           width="40"
           height="40"
-        />
+        /> */}
 
         <div className="feed-item-user-info">
           <div className="feed-item-meta">
-            <span className="feed-item-username">{item.author.username}</span>
+            <Link
+              to={`/profile/${item.author.id}`} style={{ textDecoration: 'none' }}>
+              <span className="feed-item-username">{item.author.username}</span>
+            </Link>
             <span className="feed-item-time">·</span>
             <span className="feed-item-time">{formatDate(item.createdAt)}</span>
           </div>

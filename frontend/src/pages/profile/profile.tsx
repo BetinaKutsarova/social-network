@@ -3,7 +3,12 @@ import "./profile.css";
 import { FaEdit, FaCamera } from "react-icons/fa";
 import { NavBar } from "../../components/ui/navbar";
 import { useAtom } from "jotai";
-import { activeSectionAtom, userAtom, profileAtom, activeTabAtom } from "../../state/atoms";
+import {
+  activeSectionAtom,
+  userAtom,
+  profileAtom,
+  activeTabAtom,
+} from "../../state/atoms";
 import { FeedItem } from "../../components/ui/feedItem";
 import { useUserPosts } from "../../hooks/useUserPosts";
 import { Pagination } from "../../components/ui/pagination";
@@ -11,12 +16,22 @@ import { UpdateUserProfileModal } from "../../components/ui/updateUserProfileMod
 import { UpdateUserData } from "../../interfaces/form";
 import { useParams } from "react-router-dom";
 import { api } from "../../services/api";
+import { useUserPets } from "../../hooks/useUserPets";
+import { PetItem } from "../../components/ui/petItem";
+import { PetData } from "../../interfaces/profile";
+import { UpdatePetProfileModal } from "../../components/ui/updatePetProfileModal";
+import "../../components/ui/updateModal.css";
+import { CreatePetProfileModal } from "../../components/ui/createPetModal";
 
 export const Profile: React.FC = () => {
   const [activeSection, setActiveSection] = useAtom(activeSectionAtom);
-	const[, setActiveTab] = useAtom(activeTabAtom);
+  const [, setActiveTab] = useAtom(activeTabAtom);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isEditPetModalOpen, setIsEditPetModalOpen] = useState<boolean>(false);
+  const [isCreatePetModalOpen, setIsCreatePetModalOpen] =
+    useState<boolean>(false);
   const [user, setUser] = useAtom(userAtom);
+  const [pet, setPet] = useState<PetData>();
   const [profile, setProfile] = useAtom(profileAtom);
   const [, setIsLoading] = useState(true);
 
@@ -33,7 +48,7 @@ export const Profile: React.FC = () => {
           setProfile(fetchedProfile.data);
         } else {
           setProfile(user);
-					setActiveTab("profile")
+          setActiveTab("profile");
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -44,6 +59,26 @@ export const Profile: React.FC = () => {
 
     fetchProfileData();
   }, [userId, user, setProfile, setActiveTab]);
+
+  // PETS
+  const {
+    pets,
+    isLoading: petsLoading,
+    error: petsError,
+    refreshPets,
+  } = useUserPets(userId && !isOwnProfile ? userId : undefined);
+
+  const handlePetCreate = () => {
+    setIsCreatePetModalOpen(true);
+  };
+
+  const handlePetUpdate = (updatedPet: PetData) => {
+    if (user && isOwnProfile) {
+      setPet(updatedPet);
+      setIsEditPetModalOpen(true);
+      refreshPets();
+    }
+  };
 
   const {
     userPosts,
@@ -168,7 +203,7 @@ export const Profile: React.FC = () => {
             {activeSection === "posts" && (
               <div className="feed-items">
                 {postsLoading && userPosts.length === 0 ? (
-                  <p>Loading posts...</p>
+                  <p className="loading-message">Loading posts...</p>
                 ) : error ? (
                   <p className="error-message">{error}</p>
                 ) : userPosts.length > 0 ? (
@@ -198,7 +233,7 @@ export const Profile: React.FC = () => {
                     )}
                   </>
                 ) : (
-                  <p>No posts to show.</p>
+                  <p className="no-content-message">No posts to show.</p>
                 )}
               </div>
             )}
@@ -207,36 +242,81 @@ export const Profile: React.FC = () => {
               <div className="profile-pets">
                 {isOwnProfile && (
                   <div className="add-pet-container">
-                    <button className="add-pet-button">+ Add a new pet</button>
+                    <button
+                      className="add-pet-button"
+                      onClick={handlePetCreate}
+                    >
+                      + Add a new pet
+                    </button>
                   </div>
                 )}
 
-                {/* Pets grid would go here */}
+                {petsLoading && pets.length === 0 ? (
+                  <div className="loading-message">Loading pets...</div>
+                ) : petsError ? (
+                  <div className="error-message">{petsError}</div>
+                ) : pets?.length > 0 ? (
+                  <div className="pets-grid">
+                    {pets.map((pet) => (
+                      <PetItem
+                        key={pet.id}
+                        pet={pet}
+                        isOwnProfile={isOwnProfile || false}
+                        onDelete={() => {
+                          refreshPets();
+                        }}
+                        onEdit={handlePetUpdate}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="no-content-message">No pets to show.</div>
+                )}
               </div>
             )}
 
             {activeSection === "media" && (
-              <div className="profile-media">
-                <div className="media-grid">
-                  {/* Media grid would go here */}
-                </div>
-              </div>
+              // <div className="active-section">
+              <p className="no-content-message">No media to show.</p>
+              // </div>
             )}
 
             {activeSection === "liked" && isOwnProfile && (
-              <div className="profile-liked">
-                <p className="no-content-message">No liked posts to show.</p>
-              </div>
+              // <div className="active-section">
+              <p className="no-content-message">No liked posts to show.</p>
+              // </div>
             )}
           </div>
         </div>
       </div>
       {isOwnProfile && user && (
-        <UpdateUserProfileModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onProfileUpdate={handleProfileUpdate}
-        />
+        <>
+          <UpdateUserProfileModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            onProfileUpdate={handleProfileUpdate}
+          />
+
+          {pet && (
+            <UpdatePetProfileModal
+              isOpen={isEditPetModalOpen}
+              onClose={() => setIsEditPetModalOpen(false)}
+              onPetUpdate={handlePetUpdate}
+              pet={pet}
+            />
+          )}
+
+          <CreatePetProfileModal
+            isOpen={isCreatePetModalOpen}
+            onClose={() => setIsCreatePetModalOpen(false)}
+            onPetCreate={() => {
+              refreshPets();
+              setIsCreatePetModalOpen(false);
+            }}
+          />
+        </>
+
+				
       )}
     </div>
   );

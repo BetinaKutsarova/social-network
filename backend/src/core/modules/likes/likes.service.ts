@@ -23,6 +23,17 @@ export class LikeService {
     return { count };
   }
 
+  static async hasUserLikedComment(userId: string, commentId: string) {
+    const like = await Like.findOne({
+      where: {
+        userId: userId,
+        commentId: commentId,
+      },
+    });
+
+    return !!like;
+  }
+
   static async findOne(
     criteria: Partial<LikeAttributes>
   ): Promise<LikeAttributes | null> {

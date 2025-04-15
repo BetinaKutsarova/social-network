@@ -13,17 +13,25 @@ export const useLikeCount = (commentId: string, initialCount: number = 0) => {
   const hasLiked = userLikedStatus[commentId] ?? false;
 
   useEffect(() => {
-    const fetchLikeCount = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get(`/comment/${commentId}/like/count`);
-        const count = response.data.count;
+        const countResponse = await api.get(`/comment/${commentId}/like/count`);
+        const count = countResponse.data.count;
 
         setLikeCounts((prev) => ({
           ...prev,
           [commentId]: count,
         }));
+        
+        const userLikeStatusResponse = await api.get(`/comment/${commentId}/like/status`);
+        const hasLiked = userLikeStatusResponse.data.hasLiked;
+        
+        setUserLikedStatus((prev) => ({
+          ...prev,
+          [commentId]: hasLiked,
+        }));
       } catch (err) {
-        console.error("Error fetching like count:", err);
+        console.error("Error fetching like data:", err);
         setLikeCounts((prev) => ({
           ...prev,
           [commentId]: initialCount,
@@ -31,9 +39,8 @@ export const useLikeCount = (commentId: string, initialCount: number = 0) => {
       }
     };
 
-    fetchLikeCount();
-
-  }, [commentId, initialCount, setLikeCounts]);
+    fetchData();
+  }, [commentId, initialCount, setLikeCounts, setUserLikedStatus]);
 
   const toggleLike = useCallback(async () => {
     if (isLoading) return;

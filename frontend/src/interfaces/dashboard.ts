@@ -44,13 +44,6 @@ export interface SuggestionUser {
 	avatar: string;
 }
 
-export interface NavItemProps {
-	icon: React.ReactNode;
-	label: string;
-	isActive: boolean;
-	onClick: () => void;
-}
-
 export interface FeedItemProps {
 	item: UserPost;
 	avatarUrl?: string;
