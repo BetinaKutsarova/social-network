@@ -147,7 +147,12 @@ export const Profile: React.FC = () => {
                     <FaEdit size={16} /> Edit Profile
                   </button>
                 ) : (
-                  <button className="message-button">Message</button>
+                  <button
+                    className="message-button"
+                    // onClick={() => handleMessageButtonClick(profile?.id)}
+                  >
+                    Message
+                  </button>
                 )}
               </div>
             </div>
@@ -315,8 +320,6 @@ export const Profile: React.FC = () => {
             }}
           />
         </>
-
-				
       )}
     </div>
   );

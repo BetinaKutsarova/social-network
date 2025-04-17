@@ -36,6 +36,7 @@ export const authMiddleware = async (ctx: Context, next: Next) => {
 		}
 
 		ctx.state.user = user;
+		ctx.state.token = token; 
 
 		await next();
 	} catch (error) {
