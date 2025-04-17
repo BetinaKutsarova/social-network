@@ -1,0 +1,123 @@
+.chat-container {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background);
+}
+
+.empty-state-text {
+  color: var(--color-text-dark);
+}
+
+.chat-header {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  background-color: var(--color-form-bg);
+}
+
+.avatar-container {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background-color: var(--color-border);
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-dark);
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  border: 2px solid var(--color-form-bg);
+}
+
+.status-online {
+  background-color: green;
+}
+
+.status-offline {
+  background-color: var(--color-border);
+}
+
+.user-name {
+  font-weight: 500;
+  color: var(--color-title);
+}
+
+.user-status {
+  font-size: 0.75rem;
+  color: var(--color-text-dark);
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: var(--color-background);
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  border-radius: 9999px;
+  height: 2rem;
+  width: 2rem;
+  border-top: 2px solid var(--color-button);
+  border-bottom: 2px solid var(--color-button);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-messages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.empty-text {
+  color: var(--color-text-dark);
+}

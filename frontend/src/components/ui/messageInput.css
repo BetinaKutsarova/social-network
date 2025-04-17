@@ -1,0 +1,96 @@
+.message-input-container {
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-form-bg);
+  padding: 12px;
+}
+
+.message-input-form {
+  display: flex;
+  align-items: flex-end;
+}
+
+.message-input-button {
+  padding: 8px;
+  color: var(--color-text-dark);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.message-input-button:hover {
+  color: var(--color-title);
+}
+
+.message-input-button:focus {
+  outline: none;
+}
+
+.textarea-container {
+  flex: 1;
+  position: relative;
+  margin: 0 8px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.message-textarea {
+  width: 100%;
+  padding: 8px 40px 8px 12px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 20px;
+  resize: none;
+  min-height: 40px;
+  max-height: 150px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-y: auto;
+  background-color: var(--color-input-bg);
+  color: var(--color-text); 
+}
+
+.message-textarea:focus {
+  outline: none;
+  border-color: var(--color-button);
+  box-shadow: 0 0 0 2px var(--color-focus-shadow);
+}
+
+.message-textarea:disabled {
+  background-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.emoji-button {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 4px;
+  color: var(--color-text-dark);
+}
+
+.send-button {
+  color: white;
+  background-color: var(--color-button);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.send-button:hover {
+  background-color: var(--color-button-hover);
+  color: white;
+}
+
+.send-button-disabled {
+  background-color: var(--color-border);
+  cursor: not-allowed;
+}
+
+.send-button-disabled:hover {
+  background-color: var(--color-border);
+}
